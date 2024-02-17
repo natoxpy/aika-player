@@ -5,6 +5,7 @@ import Playlists from "@/views/playlists.vue";
 import Musics from "@/views/musics/index.vue";
 import Albums from "@/views/albums.vue";
 import Artists from "@/views/artists.vue";
+import SoundcloudImportsPage from "@/views/imports/soundcloud/page.vue";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -38,6 +39,11 @@ const router = createRouter({
       path: "/artists",
       name: "Artists",
       component: Artists,
+    },
+    {
+      path: "/imports/soundcloud",
+      name: "Soundcloud import",
+      component: SoundcloudImportsPage,
     },
     //    {
     //      path: '/',
