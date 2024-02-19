@@ -6,6 +6,12 @@ export type Image = {
   name: string;
 };
 
+
+export async function getImages(): Promise<Image[]> {
+  const res = await axios.get(`${API_LOCATION}/db/images/`);
+  return res.data as Image[];
+}
+
 export async function getImage(image_id: string): Promise<Image> {
   const res = await axios.get(`${API_LOCATION}/db/images/${image_id}/`);
   return res.data as Image;

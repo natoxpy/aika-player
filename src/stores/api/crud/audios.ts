@@ -6,6 +6,11 @@ export type Audio = {
   name: string;
 };
 
+export async function getAudios(): Promise<Audio[]> {
+  const res = await axios.get(`${API_LOCATION}/db/audios/`);
+  return res.data as Audio[];
+}
+
 export async function getAudio(audio_id: string): Promise<Audio> {
   const res = await axios.get(`${API_LOCATION}/db/audios/${audio_id}/`);
   return res.data as Audio;

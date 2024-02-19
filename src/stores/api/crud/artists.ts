@@ -6,7 +6,12 @@ export type Artist = {
   name: string;
 };
 
-export async function getArtists(artist_id: string): Promise<Artist> {
+export async function getArtists(): Promise<Artist[]> {
+  const res = await axios.get(`${API_LOCATION}/db/artists/`);
+  return res.data as Artist[];
+}
+
+export async function getArtist(artist_id: string): Promise<Artist> {
   const res = await axios.get(`${API_LOCATION}/db/artists/${artist_id}/`);
   return res.data as Artist;
 }
