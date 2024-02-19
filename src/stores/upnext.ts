@@ -1,6 +1,5 @@
 import { defineStore } from "pinia";
 import { ref } from "vue";
-import type { Music as MusicType } from "@/stores/api/index.ts";
 import { getCover, getMusics } from "@/stores/api/index.ts";
 
 export const UpnextStore = defineStore("upnext", () => {
