@@ -6,7 +6,6 @@ export type Image = {
   name: string;
 };
 
-
 export async function getImages(): Promise<Image[]> {
   const res = await axios.get(`${API_LOCATION}/db/images/`);
   return res.data as Image[];
@@ -17,8 +16,10 @@ export async function getImage(image_id: string): Promise<Image> {
   return res.data as Image;
 }
 
-export async function createImage(file_id: string) {
+export async function createImage(file_id: string): Promise<Image> {
   const res = await axios.post(`${API_LOCATION}/db/images/`, {
     file: file_id,
   });
+
+  return res.data as Image;
 }

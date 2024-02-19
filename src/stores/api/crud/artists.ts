@@ -16,8 +16,10 @@ export async function getArtist(artist_id: string): Promise<Artist> {
   return res.data as Artist;
 }
 
-export async function createArtist(name: string) {
+export async function createArtist(name: string): Promise<Artist> {
   const res = await axios.post(`${API_LOCATION}/db/artists/`, {
     name,
   });
+
+  return res.data as Artist;
 }

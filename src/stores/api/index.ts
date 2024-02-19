@@ -1,6 +1,6 @@
-export { getImage, createImage } from './crud/images.ts'
-export { getAudio, createAudio } from './crud/audios.ts'
-export { getArtists, createArtist } from './crud/artists.ts'
+export { getImage, createImage } from "./crud/images.ts";
+export { getAudio, createAudio } from "./crud/audios.ts";
+export { getArtists, createArtist } from "./crud/artists.ts";
 
 export const API_LOCATION = "http://[::1]:8000";
 
@@ -16,21 +16,6 @@ export type File = {
   mime: string;
   name: string;
 };
-
-export type SoundcloudTrack = {
-  title: string;
-  url: string;
-  thumbnail: string;
-  duration: { secs: number };
-  media: string;
-  client_id: string;
-};
-
-export async function previewFromUrl(url: string) {
-  const url_encoded = encodeURIComponent(url);
-  const res = await fetch(`${API_LOCATION}/soundcloud/metadata/${url_encoded}`);
-  return await res.json() as SoundcloudTrack
-}
 
 /**
  * Returns all musics
@@ -53,4 +38,3 @@ export async function getCover(image_id: string) {
 
   return `${API_LOCATION}/cdn/30305764-14d6-4060-95a5-2eb820cf6357`;
 }
-
