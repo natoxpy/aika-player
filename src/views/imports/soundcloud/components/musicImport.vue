@@ -1,11 +1,9 @@
 <script setup lang="ts">
 import musicImportTemplate from './templates/musicImport.vue'
 import Artist from './artist.vue'
-import Album from './album.vue'
 
-import { ref } from 'vue';
-import type { Artist as ArtistType } from '@/stores/api/crud/artists';
-import { useSoundcloudImport } from '@/stores/imports/soundcloud.ts'
+import { ref, watch } from 'vue';
+import { useSoundcloudImport, type ArtistsMeta } from '@/stores/imports/soundcloud.ts'
 const soundcloudStore = useSoundcloudImport();
 
 type Props = {
@@ -14,17 +12,22 @@ type Props = {
   cover: string
   featured_artists: string[]
   album: string
-  idx: number
+  id: string
 }
 
 const props = defineProps<Props>()
 
-const artists = ref<ArtistType[]>();
-soundcloudStore.artists.then(data => artists.value = data[props.idx] as ArtistType[])
+const artists = ref<ArtistsMeta[]>([]);
+const artistsFeat = ref<ArtistsMeta[]>([]);
+const albums = ref([]);
+
+watch([soundcloudStore.artists], () => {
+  soundcloudStore.getArtists(props.id).then(data => (artists.value = data[0], artistsFeat.value = data[1]))
+})
 
 </script>
 <template>
-  <musicImportTemplate :title="title" :no-featured="featured_artists.length == 0" :idx="idx">
+  <musicImportTemplate :title="title" :no-featured="artistsFeat.length == 0" :id="id">
     <template #cover>
       <div class="w-full h-full bg-cover bg-center" :style="{
         backgroundImage: `url(${cover})`
@@ -35,19 +38,10 @@ soundcloudStore.artists.then(data => artists.value = data[props.idx] as ArtistTy
       <Artist :name="item.name" v-for="item in artists" />
     </template>
     <template #featured-artists>
-      <Artist :name="feat_artist" v-for="feat_artist in featured_artists" />
-      <!--
-      <Artist name="Lucca DL" />
-      <Artist name="SIRI" />
-      <Artist name="Zensery" />
-      <Artist name="K.KEED" />
-      <Artist name="KAZUO" />
-      <Artist name="Killa" />
-      <Artist name="Bens" />
-    -->
+      <Artist :name="feat_artist.name" v-for="feat_artist in artistsFeat" />
     </template>
     <template #album>
-      <span v-if="artists?.length == 0" class="italic text-fsecondary">No album</span>
+      <span v-if="albums?.length == 0" class="italic text-fsecondary">No album</span>
       <!--
       <Album :name="album" />
       -->

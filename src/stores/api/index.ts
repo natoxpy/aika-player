@@ -17,12 +17,23 @@ export type File = {
 	name: string;
 };
 
+export type MusicArtist = {
+	id: string;
+	music: string;
+	artist: string;
+	featured: boolean;
+};
+
 /**
  * Returns all musics
  */
 export async function getMusics() {
 	const res = await fetch(`${API_LOCATION}/db/musics/`);
 	return (await res.json()) as Array<Music>;
+}
+
+export async function getMusicArtist(_artist_id: string): Promise<MusicArtist> {
+	return { id: "", music: "", artist: "", featured: false };
 }
 
 /**

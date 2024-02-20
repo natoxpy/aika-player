@@ -3,10 +3,11 @@ import { onMounted, ref } from 'vue'
 import Artists from '../artists.vue'
 import AlbumMenu from '../albumSelectMenu/index.vue'
 import ArtistMenu from '../artistSelectMenu/index.vue'
+import XIcon from '@/components/icons/shadcn/x.vue';
 import { useSoundcloudImport } from '@/stores/imports/soundcloud.ts'
 const soundcloudStore = useSoundcloudImport();
 
-type Props = { title: string, noFeatured?: boolean, idx: number }
+type Props = { title: string, noFeatured?: boolean, id: string }
 const props = defineProps<Props>()
 
 const menuToggled = ref<'artists' | 'albums' | null>(null)
@@ -38,10 +39,14 @@ onMounted(() => {
       titleElement.innerText = 'No title'
     } else {
       titleElement.innerText = titleElement.innerText.replace(/\n/g, ' ').trim()
-      soundcloudStore.updateTitle(props.idx, titleElement.innerText);
+      soundcloudStore.updateTitle(props.id, titleElement.innerText);
     }
   }
 })
+
+function closeArtist(e: MouseEvent) {
+  menuToggled.value = null;
+}
 
 function editArtist(e: MouseEvent) {
   if (e.type == 'contextmenu')
@@ -50,7 +55,8 @@ function editArtist(e: MouseEvent) {
   menuToggled.value = 'artists'
 
   const findRoot = (item: HTMLElement): HTMLElement | null => {
-    if (item.id == 'artist-menu-item') return item
+    if (item.id == `artist-menu-item-close-${props.id}`) return null
+    if (item.id == `artist-menu-item-${props.id}`) return item
     let parent = item.parentElement
     if (!parent) return null
     return findRoot(parent)
@@ -79,7 +85,7 @@ function editAlbum(e: MouseEvent) {
   menuToggled.value = 'albums'
 
   const findRoot = (item: HTMLElement): HTMLElement | null => {
-    if (item.id == 'album-menu-item') return item
+    if (item.id == `album-menu-item-${props.id}`) return item
     let parent = item.parentElement
     if (!parent) return null
     return findRoot(parent)
@@ -118,9 +124,11 @@ function editAlbum(e: MouseEvent) {
           contenteditable="true" ref="titleSpan">
           {{ title }}
         </div>
+
       </div>
-      <div class="flex relative gap-1 cursor-pointer" v-on:click="editArtist" v-on:contextmenu="editArtist">
-        <div id="artist-menu-item" class="flex w-full overflow-hidden">
+      <div :id="`artist-menu-item-${id}`" role="button" class="flex relative gap-1 cursor-pointer"
+        v-on:click="editArtist">
+        <div class="flex w-full overflow-hidden">
           <Artists :noFeatured="noFeatured">
             <template #artists>
               <slot name="artists" />
@@ -132,11 +140,20 @@ function editAlbum(e: MouseEvent) {
           </Artists>
         </div>
         <div v-if="menuToggled == 'artists'">
-          <ArtistMenu :idx="idx" />
+          <ArtistMenu :id="id">
+            <template #search-right-icon>
+              <span :id="`artist-menu-item-close-${id}`"
+                class="stroke-fsecondary hover:stroke-fprimary active:stroke-fprimary" role="button"
+                v-on:click="closeArtist">
+                <XIcon :size="24" color="defaultColor" />
+              </span>
+            </template>
+
+          </ArtistMenu>
         </div>
       </div>
-      <div id="album-menu-item" class="flex gap-1 relative cursor-pointer" v-on:click="editAlbum"
-        v-on:contextmenu="editAlbum">
+      <div :id="`album-menu-item-${id}`" :role="menuToggled == null ? 'button' : ''"
+        class="flex gap-1 relative cursor-pointer" v-on:click="editAlbum" v-on:contextmenu="editAlbum">
         <div class="flex overflow-hidden">
           <slot name="album" />
         </div>
