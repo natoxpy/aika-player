@@ -1,68 +1,108 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { onMounted, ref } from 'vue'
 import Artists from '../artists.vue'
 import AlbumMenu from '../albumSelectMenu/index.vue'
 import ArtistMenu from '../artistSelectMenu/index.vue'
+import { useSoundcloudImport } from '@/stores/imports/soundcloud.ts'
+const soundcloudStore = useSoundcloudImport();
 
-type Props = { title: string, noFeatured?: boolean, albumMenu?: boolean, artistMenu?: boolean }
-defineProps<Props>()
+type Props = { title: string, noFeatured?: boolean, idx: number }
+const props = defineProps<Props>()
+
+const menuToggled = ref<'artists' | 'albums' | null>(null)
 
 const titleSpan = ref<HTMLDivElement>()
+const artistWinListener = ref<(e: MouseEvent) => void>()
+const albumWinListener = ref<(e: MouseEvent) => void>()
 
 function EditCover() {
+  // TODO 
   console.log('edit cover')
 }
 
-function placeCaretAtEnd(el: any) {
-  el.focus()
-  if (typeof window.getSelection != 'undefined' && typeof document.createRange != 'undefined') {
-    var range = document.createRange()
-    range.selectNodeContents(el)
-    range.collapse(false)
-    var sel: any = window.getSelection()
-    sel.removeAllRanges()
-    sel.addRange(range)
-  } else if (typeof (document.body as any).createTextRange != 'undefined') {
-    var textRange = (document.body as any).createTextRange()
-    textRange.moveToElementText(el)
-    textRange.collapse(false)
-    textRange.select()
+onMounted(() => {
+  const titleElement = titleSpan.value;
+
+  if (!titleElement) return
+
+  titleElement.onfocus = () => {
+    titleElement.style.borderBottom = '1px solid hsl(0, 0%, 50%, 0.5)'
+    titleElement.style.whiteSpace = 'normal'
   }
+
+  titleElement.onblur = () => {
+    titleElement.style.borderBottom = ''
+    titleElement.style.whiteSpace = 'nowrap'
+
+    if (titleElement.innerText.trim() == '') {
+      titleElement.innerText = 'No title'
+    } else {
+      titleElement.innerText = titleElement.innerText.replace(/\n/g, ' ').trim()
+      soundcloudStore.updateTitle(props.idx, titleElement.innerText);
+    }
+  }
+})
+
+function editArtist(e: MouseEvent) {
+  if (e.type == 'contextmenu')
+    e.preventDefault()
+
+  menuToggled.value = 'artists'
+
+  const findRoot = (item: HTMLElement): HTMLElement | null => {
+    if (item.id == 'artist-menu-item') return item
+    let parent = item.parentElement
+    if (!parent) return null
+    return findRoot(parent)
+  }
+
+  if (artistWinListener.value != null) return
+
+  artistWinListener.value = (ce: MouseEvent) => {
+    if (menuToggled.value != 'artists') return
+    const root = findRoot(ce.target as HTMLElement);
+
+    if (root != null)
+      return;
+
+    menuToggled.value = null;
+  }
+
+  window.addEventListener('click', artistWinListener.value)
+
 }
 
-function EditTitle() {
-  const element = titleSpan.value
-  if (!element) return
+function editAlbum(e: MouseEvent) {
+  if (e.type == 'contextmenu')
+    e.preventDefault()
 
-  element.contentEditable = 'true'
-  element.style.borderBottom = '1px solid hsl(0, 0%, 50%, 0.5)'
-  element.style.whiteSpace = 'normal'
+  menuToggled.value = 'albums'
 
-  placeCaretAtEnd(element)
+  const findRoot = (item: HTMLElement): HTMLElement | null => {
+    if (item.id == 'album-menu-item') return item
+    let parent = item.parentElement
+    if (!parent) return null
+    return findRoot(parent)
+  }
 
-  element.onblur = () => (
-    (element.contentEditable = 'false'),
-    (element.style.borderBottom = ''),
-    (element.style.whiteSpace = 'nowrap'),
-    element.innerText.trim() == ''
-      ? (element.innerText = 'No title')
-      : (element.innerText = element.innerText.replace(/\n/g, ' ').trim()),
-    console.log(element.innerText)
-  )
+  if (albumWinListener.value != null) return
+
+  albumWinListener.value = (ce: MouseEvent) => {
+    if (menuToggled.value != 'albums') return;
+    const root = findRoot(ce.target as HTMLElement);
+
+    if (root != null)
+      return;
+
+    menuToggled.value = null;
+  }
+
+  window.addEventListener('click', albumWinListener.value)
 }
 
-function EditArtists(e: MouseEvent) {
-  console.log('open artists menu')
-}
-
-function EditAlbum(e: MouseEvent) {
-  console.log('open albums menu')
-}
 </script>
 <template>
-  <div
-    class="flex flex-col text-white h-[350px] min-w-[250px] w-[250px] rounded-primary"
-  >
+  <div class="flex flex-col text-white h-[350px] min-w-[250px] w-[250px] rounded-primary">
     <div class="relative w-[250px] mb-4 min-h-[250px]">
       <div class="z-10 absolute w-[250px] h-[250px] rounded-primary overflow-hidden">
         <slot name="cover" />
@@ -72,20 +112,15 @@ function EditAlbum(e: MouseEvent) {
       </div>
     </div>
     <div class="flex flex-col select-none">
-      <div
-        class="text-lg line-clamp-2 min-h-[28px] overflow-hidden text-ellipsis"
-        v-on:dblclick="EditTitle"
-      >
+      <div class="text-lg line-clamp-2 min-h-[28px] overflow-hidden text-ellipsis">
         <div
-          class="select-text border-baccent outline-none min-h-[28px] transition-all text-ellipsis overflow-hidden"
-          ref="titleSpan"
-          v-on:dblclick="EditTitle"
-        >
+          class="select-text border-baccent outline-none min-h-[28px] whitespace-nowrap transition-all text-ellipsis overflow-hidden"
+          contenteditable="true" ref="titleSpan">
           {{ title }}
         </div>
       </div>
-      <div class="flex relative gap-1" v-on:dblclick="EditArtists">
-        <div class="flex w-full overflow-hidden">
+      <div class="flex relative gap-1 cursor-pointer" v-on:click="editArtist" v-on:contextmenu="editArtist">
+        <div id="artist-menu-item" class="flex w-full overflow-hidden">
           <Artists :noFeatured="noFeatured">
             <template #artists>
               <slot name="artists" />
@@ -96,15 +131,18 @@ function EditAlbum(e: MouseEvent) {
             </template>
           </Artists>
         </div>
-        <div v-if="artistMenu">
-          <ArtistMenu />
-        </div>
-        <div v-if="albumMenu">
-          <AlbumMenu />
+        <div v-if="menuToggled == 'artists'">
+          <ArtistMenu :idx="idx" />
         </div>
       </div>
-      <div class="flex gap-1 overflow-hidden" v-on:dblclick="EditAlbum">
-        <slot name="album" />
+      <div id="album-menu-item" class="flex gap-1 relative cursor-pointer" v-on:click="editAlbum"
+        v-on:contextmenu="editAlbum">
+        <div class="flex overflow-hidden">
+          <slot name="album" />
+        </div>
+        <div v-if="menuToggled == 'albums'">
+          <AlbumMenu />
+        </div>
       </div>
     </div>
   </div>
