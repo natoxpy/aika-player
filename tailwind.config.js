@@ -5,7 +5,11 @@ const defaultConfig = require("tailwindcss/defaultConfig");
 export default {
   content: ["./src/**/*.{js,ts,vue,tsx}"],
   theme: {
-    extend: {},
+    extend: {
+      fontFamily: {
+        inter: '"Inter", sans-serif',
+      },
+    },
     borderRadius: {
       primary: 3,
       ...defaultConfig.theme.borderRadius,
