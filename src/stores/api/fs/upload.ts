@@ -9,7 +9,7 @@ export type File = {
   size: number;
 };
 
-export async function upload_from_url(url: string): Promise<File> {
+export async function uploadFromUrl(url: string): Promise<File> {
   const url_to_upload = encodeURIComponent(url);
   const res = await axios.post(`${API_LOCATION}/fs/upload/${url_to_upload}`);
   return res.data as File;

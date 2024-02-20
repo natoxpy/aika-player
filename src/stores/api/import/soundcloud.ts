@@ -14,9 +14,9 @@ export type SoundcloudImport = {
   title: string;
   image_id: string;
   soundcloud_url: string;
-  artists_id: string;
+  artists_id: string[];
   featured_artists_id: string[];
-  album_id: string;
+  album_id?: string;
 };
 
 export async function soundcloudImport(data: SoundcloudImport): Promise<Music> {
