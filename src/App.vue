@@ -10,7 +10,9 @@ import Sidebar from './components/sidebar/index.vue'
     </div>
     <div class="w-full flex-shrink-1 relative">
       <div class="absolute bottom-0 w-full h-[65px]">
+        <!-- 
         <PageControls />
+        -->
       </div>
       <RouterView />
     </div>
