@@ -11,7 +11,6 @@ function addArtist() {
   if (props.artist_type == 'artist') return addFeaturedArtist()
   let hasArtist = soundcloudStore.hasArtist(props.music_id, props.id)
 
-  console.log(hasArtist)
   if (hasArtist) return soundcloudStore.removeArtist(props.music_id, props.id)
 
   soundcloudStore.addArtist(props.music_id, props.id)

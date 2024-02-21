@@ -33,28 +33,31 @@ export type AlbumsMeta = Album & { cover_url: string; selected?: boolean };
 
 export const useSoundcloudImport = defineStore("soundcloud_imports", () => {
   const musics = ref<Map<string, string>>(new Map());
+  const urls = ref<Map<string, string>>(new Map());
   const artists = ref<Map<string, Array<[string, boolean]>>>(new Map());
   const albums = ref<Map<string, Array<string>>>(new Map());
   const covers = ref<Map<string, string>>(new Map());
 
-  const importing = ref(false);
+  const importing = ref<Set<string>>(new Set());
 
   const updateTitle = (id: string, title: string) => {
     musics.value.set(id, title);
   };
 
   const addImportFromUrl = async (url: string) => {
-    importing.value = true;
+    const importId = crypto.randomUUID();
+    importing.value.add(importId);
 
     const track = await previewFromUrl(url);
     const musicId = crypto.randomUUID();
 
+    urls.value.set(musicId, track.url);
     musics.value.set(musicId, track.title);
     artists.value.set(musicId, []);
     albums.value.set(musicId, []);
     covers.value.set(musicId, track.thumbnail);
 
-    importing.value = false;
+    importing.value.delete(importId);
   };
 
   const allArtists = computed(async () => {
@@ -105,6 +108,36 @@ export const useSoundcloudImport = defineStore("soundcloud_imports", () => {
     importing,
     addImportFromUrl,
     updateTitle,
+
+    getAll: () => {
+      const importMusics: SoundcloudImportMusic[] = [];
+
+      for (const [musicId, title] of musics.value.entries()) {
+        const artistList = (artists.value.get(musicId) ?? [])
+          .filter((item) => item[1] === false)
+          .map((item) => item[0]);
+
+        const featuredArtistList = (artists.value.get(musicId) ?? [])
+          .filter((item) => item[1] === true)
+          .map((item) => item[0]);
+
+        const albumList = albums.value.get(musicId) ?? [];
+
+        const soundcloud_url = urls.value.get(musicId) ?? "";
+        const coverUrl = covers.value.get(musicId) ?? "";
+
+        importMusics.push({
+          title,
+          image_src: coverUrl,
+          artists_id: artistList,
+          featured_artists_id: featuredArtistList,
+          albums_id: albumList,
+          soundcloud_url,
+        });
+      }
+
+      return importMusics;
+    },
 
     hasArtist: (musicId: string, artistId: string) => {
       const artistList = artists.value.get(musicId) ?? [];

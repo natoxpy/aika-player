@@ -16,7 +16,7 @@ export type SoundcloudImport = {
 	soundcloud_url: string;
 	artists_id: string[];
 	featured_artists_id: string[];
-	album_id?: string;
+	albums_id: string[];
 };
 
 export type SoundcloudImportMusic = {
@@ -25,7 +25,7 @@ export type SoundcloudImportMusic = {
 	soundcloud_url: string;
 	artists_id: string[];
 	featured_artists_id: string[];
-	album_id?: string;
+	albums_id?: string[];
 };
 
 export async function soundcloudImport(data: SoundcloudImport): Promise<Music> {
@@ -38,3 +38,4 @@ export async function previewFromUrl(url: string) {
 	const res = await fetch(`${API_LOCATION}/soundcloud/metadata/${url_encoded}`);
 	return (await res.json()) as SoundcloudTrack;
 }
+

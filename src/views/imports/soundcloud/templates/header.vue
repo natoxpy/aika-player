@@ -1,7 +1,3 @@
-<script setup lang="ts">
-import SaveIcon from '@/components/icons/shadcn/save.vue';
-
-</script>
 <template>
   <div class="h-[150px] mb-[5px] text-white flex flex-row justify-between items-center">
     <div class="flex flex-col gap-1 min-w-[500px]">
@@ -13,10 +9,7 @@ import SaveIcon from '@/components/icons/shadcn/save.vue';
       </div>
     </div>
     <div class="flex max-w-[600px] flex-grow items-center gap-4">
-      <button
-        class='border border-baccent stroke-baccent hover:stroke-fprimary h-[34px] w-[38px] flex items-center justify-center rounded-primary transition-all'>
-        <SaveIcon :size="20" color="defaultColor" />
-      </button>
+      <slot name="save" />
       <div class="flex-grow">
         <slot name="input" />
       </div>

@@ -7,7 +7,7 @@ import XIcon from '@/components/icons/shadcn/x.vue';
 import { useSoundcloudImport } from '@/stores/imports/soundcloud.ts'
 const soundcloudStore = useSoundcloudImport();
 
-type Props = { title: string, noFeatured?: boolean, id: string }
+type Props = { title: string, noFeatured?: boolean, id: string, disabledActions?: boolean }
 const props = defineProps<Props>()
 
 const menuToggled = ref<'artists' | 'albums' | null>(null)
@@ -17,11 +17,14 @@ const artistWinListener = ref<(e: MouseEvent) => void>()
 const albumWinListener = ref<(e: MouseEvent) => void>()
 
 function EditCover() {
+  if (props.disabledActions === true) return
   // TODO 
   console.log('edit cover')
 }
 
+
 onMounted(() => {
+  if (props.disabledActions === true) return
   const titleElement = titleSpan.value;
 
   if (!titleElement) return
@@ -45,10 +48,12 @@ onMounted(() => {
 })
 
 function closeMenu(e: MouseEvent) {
+  if (props.disabledActions === true) return
   menuToggled.value = null;
 }
 
 function editArtist(e: MouseEvent) {
+  if (props.disabledActions === true) return
   if (e.type == 'contextmenu')
     e.preventDefault()
 
@@ -79,6 +84,7 @@ function editArtist(e: MouseEvent) {
 }
 
 function editAlbum(e: MouseEvent) {
+  if (props.disabledActions === true) return
   if (e.type == 'contextmenu')
     e.preventDefault()
 
@@ -127,8 +133,8 @@ function editAlbum(e: MouseEvent) {
         </div>
 
       </div>
-      <div :id="`artist-menu-item-${id}`" role="button" class="flex relative gap-1 cursor-pointer"
-        v-on:click="editArtist">
+      <div :id="`artist-menu-item-${id}`" role="button" class="flex relative gap-1"
+        :class="{ 'cursor-pointer': disabledActions === false || disabledActions === undefined }" v-on:click="editArtist">
         <div class="flex w-full overflow-hidden">
           <Artists :noFeatured="noFeatured">
             <template #artists>
@@ -153,8 +159,9 @@ function editAlbum(e: MouseEvent) {
           </ArtistMenu>
         </div>
       </div>
-      <div :id="`album-menu-item-${id}`" :role="menuToggled == null ? 'button' : ''"
-        class="flex gap-1 relative cursor-pointer" v-on:click="editAlbum" v-on:contextmenu="editAlbum">
+      <div :id="`album-menu-item-${id}`" :role="menuToggled == null ? 'button' : ''" class="flex gap-1 relative "
+        :class="{ 'cursor-pointer': disabledActions === false || disabledActions === undefined }" v-on:click="editAlbum"
+        v-on:contextmenu="editAlbum">
         <div class="flex overflow-hidden gap-2">
           <slot name="album" />
         </div>
