@@ -44,7 +44,7 @@ onMounted(() => {
   }
 })
 
-function closeArtist(e: MouseEvent) {
+function closeMenu(e: MouseEvent) {
   menuToggled.value = null;
 }
 
@@ -85,6 +85,7 @@ function editAlbum(e: MouseEvent) {
   menuToggled.value = 'albums'
 
   const findRoot = (item: HTMLElement): HTMLElement | null => {
+    if (item.id == `album-menu-item-close-${props.id}`) return null
     if (item.id == `album-menu-item-${props.id}`) return item
     let parent = item.parentElement
     if (!parent) return null
@@ -144,7 +145,7 @@ function editAlbum(e: MouseEvent) {
             <template #search-right-icon>
               <span :id="`artist-menu-item-close-${id}`"
                 class="stroke-fsecondary hover:stroke-fprimary active:stroke-fprimary" role="button"
-                v-on:click="closeArtist">
+                v-on:click="closeMenu">
                 <XIcon :size="24" color="defaultColor" />
               </span>
             </template>
@@ -154,11 +155,19 @@ function editAlbum(e: MouseEvent) {
       </div>
       <div :id="`album-menu-item-${id}`" :role="menuToggled == null ? 'button' : ''"
         class="flex gap-1 relative cursor-pointer" v-on:click="editAlbum" v-on:contextmenu="editAlbum">
-        <div class="flex overflow-hidden">
+        <div class="flex overflow-hidden gap-2">
           <slot name="album" />
         </div>
         <div v-if="menuToggled == 'albums'">
-          <AlbumMenu />
+          <AlbumMenu :id="id">
+            <template #search-right-icon>
+              <span :id="`album-menu-item-close-${id}`"
+                class="stroke-fsecondary hover:stroke-fprimary active:stroke-fprimary" role="button"
+                v-on:click="closeMenu">
+                <XIcon :size="24" color="defaultColor" />
+              </span>
+            </template>
+          </AlbumMenu>
         </div>
       </div>
     </div>

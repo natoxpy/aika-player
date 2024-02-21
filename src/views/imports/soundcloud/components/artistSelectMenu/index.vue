@@ -42,7 +42,7 @@ watch([artistSearchInput], () => {
       </div>
       <ArtistItem :name="artist.name" :avatar="artist.avatar_url"
         :artist_type="artist.featured == undefined ? undefined : artist.featured == true ? 'featured-artist' : 'artist'"
-        :id="artist.id" :music_id="id" :idx="idx" v-for="[idx, artist] in artists.entries()" />
+        :id="artist.id" :music_id="id" v-for="artist in artists.values()" />
       <div v-if="artists.findIndex(item => item.name === artistInput) == -1 && (artistInput ?? '').trim() !== ''"
         class=" flex justify-center p-2 hover:bg-bextra">
         <PlusIcon :size="24" />

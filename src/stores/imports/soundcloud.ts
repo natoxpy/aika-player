@@ -14,6 +14,11 @@ import {
   type SoundcloudImportMusic,
   previewFromUrl,
 } from "../api/import/soundcloud";
+import {
+  getAlbums,
+  type Album,
+  getAlbumDefaultCover,
+} from "../api/crud/albums";
 
 export async function uploadImageFromUrl(url: string) {
   const file = await uploadFromUrl(url);
@@ -24,19 +29,18 @@ export async function uploadImageFromUrl(url: string) {
 }
 
 export type ArtistsMeta = Artist & { avatar_url: string; featured?: boolean };
+export type AlbumsMeta = Album & { cover_url: string; selected?: boolean };
 
 export const useSoundcloudImport = defineStore("soundcloud_imports", () => {
   const musics = ref<Map<string, string>>(new Map());
   const artists = ref<Map<string, Array<[string, boolean]>>>(new Map());
+  const albums = ref<Map<string, Array<string>>>(new Map());
   const covers = ref<Map<string, string>>(new Map());
 
-  const imports = ref<Map<string, SoundcloudImportMusic>>(new Map());
   const importing = ref(false);
 
   const updateTitle = (id: string, title: string) => {
-    const music = imports.value.get(id);
-    if (!music) return;
-    music.title = title;
+    musics.value.set(id, title);
   };
 
   const addImportFromUrl = async (url: string) => {
@@ -47,43 +51,62 @@ export const useSoundcloudImport = defineStore("soundcloud_imports", () => {
 
     musics.value.set(musicId, track.title);
     artists.value.set(musicId, []);
+    albums.value.set(musicId, []);
     covers.value.set(musicId, track.thumbnail);
 
     importing.value = false;
   };
 
   const allArtists = computed(async () => {
-    console.log('awa')
     const artists: ArtistsMeta[] = [];
-    const apiArtists = await getArtists(); 
+    const apiArtists = await getArtists();
 
     for (const artist of apiArtists) {
       const avatar_url = await getAvatar(artist.id);
 
       artists.push({
         avatar_url,
-        ...artist 
-      })
+        ...artist,
+      });
     }
 
     return artists;
   });
 
+  const allAlbums = computed(async () => {
+    const albums: AlbumsMeta[] = [];
+    const apiAlbums = await getAlbums();
+
+    for (const album of apiAlbums) {
+      albums.push({
+        cover_url: getAlbumDefaultCover(),
+        ...album,
+      });
+    }
+
+    return albums;
+  });
+
+  const localGetAlbum = async (albumId: string) => {
+    const albums = await allAlbums.value;
+    return albums.find((item) => item.id === albumId) as AlbumsMeta;
+  };
+
   const localGetArtist = async (artistId: string) => {
     const artists = await allArtists.value;
-    return artists.find(item => item.id === artistId) as ArtistsMeta
-  }
+    return artists.find((item) => item.id === artistId) as ArtistsMeta;
+  };
 
   return {
     musics,
     artists,
+    albums,
     covers,
-    imports,
     importing,
     addImportFromUrl,
     updateTitle,
 
-    hasArtist: (musicId: string, artistId: string, feat = false) => {
+    hasArtist: (musicId: string, artistId: string) => {
       const artistList = artists.value.get(musicId) ?? [];
       return artistList.findIndex((itm) => itm[0] === artistId) !== -1;
     },
@@ -105,9 +128,10 @@ export const useSoundcloudImport = defineStore("soundcloud_imports", () => {
       artists.value.set(musicId, newArtistList);
     },
 
-    addArtist: (music_id: string, artist_id: string, featured = false) => {
-      const artistList = artists.value.get(music_id) ?? [];
-      artistList.push([artist_id, featured]);
+    addArtist: (musicId: string, artistId: string, featured = false) => {
+      const artistList = artists.value.get(musicId) ?? [];
+      artistList.push([artistId, featured]);
+      artists.value.set(musicId, artistList);
     },
 
     getArtistsForSelector: async (music_id: string, filter?: string) => {
@@ -120,7 +144,6 @@ export const useSoundcloudImport = defineStore("soundcloud_imports", () => {
         used.add(artist_id);
 
         const artist = await localGetArtist(artist_id);
-        // const artist_avatar = await getAvatar(artist_id);
 
         artistsMeta.push({
           featured: feat,
@@ -180,6 +203,83 @@ export const useSoundcloudImport = defineStore("soundcloud_imports", () => {
       }
 
       return [artistsMeta, artistsFeatMeta];
+    },
+
+    hasAlbum: (musicId: string, albumId: string) => {
+      const albumList = albums.value.get(musicId) ?? [];
+      return albumList.findIndex((itm) => itm === albumId) !== -1;
+    },
+
+    removeAlbum: (musicId: string, albumId: string) => {
+      const albumList = albums.value.get(musicId) ?? [];
+      const newAlbumList = albumList.filter((itm) => itm !== albumId);
+      albums.value.set(musicId, newAlbumList);
+    },
+
+    addAlbum: (musicId: string, albumId: string) => {
+      const artistList = albums.value.get(musicId) ?? [];
+      artistList.push(albumId);
+    },
+
+    getAlbumsForSelector: async (music_id: string, filter?: string) => {
+      const albumsMeta: AlbumsMeta[] = [];
+
+      const albumList = albums.value.get(music_id) ?? [];
+      const used = new Set();
+
+      for (const albumId of albumList) {
+        used.add(albumId);
+
+        const album = await localGetAlbum(albumId);
+
+        albumsMeta.push({
+          selected: true,
+          ...album,
+        });
+      }
+
+      const apiAlbums = (await allAlbums.value).filter(
+        (item) => !used.has(item.id),
+      );
+
+      if (filter === undefined || filter.trim() === "") {
+        for (const album of apiAlbums) {
+          albumsMeta.push({
+            ...album,
+          });
+        }
+      } else {
+        const fuse = new Fuse(apiAlbums, { keys: ["name"] });
+
+        for (const result of fuse.search(filter)) {
+          const album = result.item;
+
+          albumsMeta.push({
+            ...album,
+          });
+        }
+      }
+
+      return albumsMeta;
+    },
+
+    getAlbums: async (id: string) => {
+      const albumsMeta: AlbumsMeta[] = [];
+
+      const albumList = albums.value.get(id) ?? [];
+
+      for (const albumId of albumList) {
+        const album = await localGetAlbum(albumId);
+
+        const data = {
+          selected: true,
+          ...album,
+        };
+
+        albumsMeta.push(data);
+      }
+
+      return albumsMeta;
     },
   };
 });

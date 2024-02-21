@@ -1,22 +1,23 @@
 <script setup lang="ts">
 import MicIcon from '@/components/icons/shadcn/mic.vue'
 import StarIcon from '@/components/icons/shadcn/star.vue'
-import { ref } from 'vue';
-import { useSoundcloudImport, type ArtistsMeta } from '@/stores/imports/soundcloud.ts'
+import { useSoundcloudImport } from '@/stores/imports/soundcloud.ts'
 const soundcloudStore = useSoundcloudImport();
 
-type Props = { name: string; avatar: string; artist_type?: 'artist' | 'featured-artist', music_id: string, idx: number, id: string }
+type Props = { name: string; avatar: string; artist_type?: 'artist' | 'featured-artist', music_id: string, id: string }
 const props = defineProps<Props>()
 
-function addArtist(e: MouseEvent) {
-  if (props.artist_type == 'artist') return addFeaturedArtist(e)
-  let hasArtist = soundcloudStore.hasArtist(props.music_id, props.id) || soundcloudStore.hasArtist(props.music_id, props.id, true);
+function addArtist() {
+  if (props.artist_type == 'artist') return addFeaturedArtist()
+  let hasArtist = soundcloudStore.hasArtist(props.music_id, props.id)
+
+  console.log(hasArtist)
   if (hasArtist) return soundcloudStore.removeArtist(props.music_id, props.id)
 
   soundcloudStore.addArtist(props.music_id, props.id)
 }
 
-function addFeaturedArtist(e: MouseEvent) {
+function addFeaturedArtist() {
   if (props.artist_type == 'featured-artist') {
     return
   }

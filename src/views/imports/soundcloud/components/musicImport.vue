@@ -3,7 +3,7 @@ import musicImportTemplate from './templates/musicImport.vue'
 import Artist from './artist.vue'
 
 import { ref, watch } from 'vue';
-import { useSoundcloudImport, type ArtistsMeta } from '@/stores/imports/soundcloud.ts'
+import { useSoundcloudImport, type ArtistsMeta, type AlbumsMeta } from '@/stores/imports/soundcloud.ts'
 const soundcloudStore = useSoundcloudImport();
 
 type Props = {
@@ -19,12 +19,15 @@ const props = defineProps<Props>()
 
 const artists = ref<ArtistsMeta[]>([]);
 const artistsFeat = ref<ArtistsMeta[]>([]);
-const albums = ref([]);
+const albums = ref<AlbumsMeta[]>([]);
 
 watch([soundcloudStore.artists], () => {
   soundcloudStore.getArtists(props.id).then(data => (artists.value = data[0], artistsFeat.value = data[1]))
 })
 
+watch([soundcloudStore.albums], () => {
+  soundcloudStore.getAlbums(props.id).then(data => albums.value = data)
+})
 </script>
 <template>
   <musicImportTemplate :title="title" :no-featured="artistsFeat.length == 0" :id="id">
@@ -42,6 +45,7 @@ watch([soundcloudStore.artists], () => {
     </template>
     <template #album>
       <span v-if="albums?.length == 0" class="italic text-fsecondary">No album</span>
+      <Artist :name="album.name" v-for="album in albums" />
       <!--
       <Album :name="album" />
       -->
