@@ -4,7 +4,7 @@ import StarIcon from '@/components/icons/shadcn/star.vue'
 import { useSoundcloudImport } from '@/stores/imports/soundcloud.ts'
 const soundcloudStore = useSoundcloudImport();
 
-type Props = { name: string; avatar: string; artist_type?: 'artist' | 'featured-artist', music_id: string, id: string }
+type Props = { name: string; avatar: string; artist_type?: 'artist' | 'featured-artist', music_id: string, id: string, newly?: boolean }
 const props = defineProps<Props>()
 
 function addArtist() {
@@ -13,7 +13,7 @@ function addArtist() {
 
   if (hasArtist) return soundcloudStore.removeArtist(props.music_id, props.id)
 
-  soundcloudStore.addArtist(props.music_id, props.id)
+  soundcloudStore.addArtist(props.music_id, props.id, undefined, props.newly === false)
 }
 
 function addFeaturedArtist() {
@@ -26,8 +26,9 @@ function addFeaturedArtist() {
 
 </script>
 <template>
-  <div role="button" class="flex items-center border-b border-baccent pr-2 h-11 hover:bg-bextra cursor-pointer"
-    v-on:click="addArtist" v-on:dbclick="addFeaturedArtist">
+  <div role="button"
+    class="flex items-center border-b border-baccent pr-2 h-11 hover:bg-bextra cursor-pointer transition-colors"
+    :class="{ 'bg-baccent': newly === true }" v-on:click="addArtist" v-on:dbclick="addFeaturedArtist">
     <div class="w-8 h-8 flex justify-center items-center stroke-fsecondary">
       <span v-if="artist_type == 'artist'">
         <MicIcon :size="20" color="defaultColor" />

@@ -12,12 +12,10 @@ import PlusCircleIcon from '@/components/icons/shadcn/plusCircle.vue'
       </div>
     </div>
     <div class="flex items-center gap-4">
-      <div
-        class="flex stroke-baccent hover:stroke-fsecondary cursor-pointer justify-center items-center"
-      >
-        <button v-on:click="() => console.log(1)">
+      <div class="flex stroke-baccent hover:stroke-fsecondary cursor-pointer justify-center items-center">
+        <RouterLink to="/imports/soundcloud">
           <PlusCircleIcon :size="36" :stroke-width="0.5" color="defaultColor" />
-        </button>
+        </RouterLink>
       </div>
       <div class="">
         <slot name="filter" />

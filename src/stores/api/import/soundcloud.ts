@@ -1,6 +1,7 @@
 import axios from "axios";
-import { API_LOCATION, createImage, type Music } from "..";
+import { API_LOCATION, createArtist, createImage, type Music } from "..";
 import { uploadFromUrl } from "../fs/upload";
+import { createAlbum } from "../crud/albums";
 
 export type SoundcloudTrack = {
   title: string;
@@ -23,6 +24,9 @@ export type SoundcloudImport = {
 export type SoundcloudImportMusic = {
   title: string;
   image_src: string;
+  artists_not_in_db: string[],
+  featured_artists_not_in_db: string[],
+  albums_not_in_db: string[],
   soundcloud_url: string;
   artists_id: string[];
   featured_artists_id: string[];
@@ -34,12 +38,24 @@ export async function soundcloudImport(
 ): Promise<Music> {
   const file = await uploadFromUrl(data.image_src);
   const image = await createImage(file.id);
+  const artists_id = data.artists_id;
+  const albums_id = data.albums_id;
+
+  for (const artistName of data.artists_not_in_db) {
+    const artist =  await createArtist(artistName);
+    artists_id.push(artist.id)
+  }
+
+  for (const albumName of data.albums_not_in_db) {
+    const album =  await createAlbum(albumName);
+    albums_id.push(album.id)
+  }
 
   const importData: SoundcloudImport = {
     title: data.title,
     image_id: image.id,
     soundcloud_url: data.soundcloud_url,
-    artists_id: data.artists_id,
+    artists_id,
     featured_artists_id: data.featured_artists_id,
     albums_id: data.albums_id,
   };

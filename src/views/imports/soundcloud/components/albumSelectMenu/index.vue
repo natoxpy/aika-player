@@ -16,13 +16,22 @@ soundcloudStore.getAlbumsForSelector(props.id).then(data => (albums.value = data
 const [albumInput, albumSearchInput] = useDebouncedWithValue('', 0)
 
 watch([soundcloudStore.albums], () => {
-  soundcloudStore.getAlbumsForSelector(props.id, albumInput.value).then(data => (albums.value = data as AlbumsMeta[]))
+  soundcloudStore.getAlbumsForSelector(props.id, albumSearchInput.value).then(data => (albums.value = data as AlbumsMeta[]))
 })
 
 watch([albumSearchInput], () => {
   const albumSearchValue = albumSearchInput.value;
   soundcloudStore.getAlbumsForSelector(props.id, albumSearchValue).then(data => (albums.value = data as AlbumsMeta[]))
 })
+
+async function saveAlbum() {
+  const name = albumSearchInput.value;
+  if (name === undefined) return
+
+  soundcloudStore.addNewAlbums(name)
+  soundcloudStore.getAlbumsForSelector(props.id).then(data => (albums.value = data as AlbumsMeta[]))
+}
+
 
 </script>
 <template>
@@ -38,7 +47,7 @@ watch([albumSearchInput], () => {
     </div>
     <div class="flex flex-col">
       <AlbumItem :music_id="id" :id="album.id" :name="album.name" :selected="album.selected === true"
-        :cover="album.cover_url" v-for="album in albums.values()" />
+        :newly="album.existedInDB == false" :cover="album.cover_url" v-for="album in albums.values()" />
       <!--
       <AlbumItem name="Miracle Milk" selected
         cover="https://m.media-amazon.com/images/I/71JhHRU9i2L._UF1000,1000_QL80_.jpg" />
@@ -48,7 +57,7 @@ watch([albumSearchInput], () => {
       -->
 
       <div v-if="albums.findIndex(item => item.name === albumInput) == -1 && (albumInput ?? '').trim() !== ''"
-        class=" flex justify-center p-2 hover:bg-bextra">
+        class=" flex justify-center p-2 hover:bg-bextra" v-on:click="saveAlbum()">
         <PlusIcon :size="24" />
         <span>Add {{ albumInput }}</span>
       </div>

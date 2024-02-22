@@ -3,7 +3,7 @@ import CheckIcon from '@/components/icons/shadcn/check.vue'
 import { useSoundcloudImport, type ArtistsMeta } from '@/stores/imports/soundcloud.ts'
 const soundcloudStore = useSoundcloudImport();
 
-type Props = { name: string; cover: string; selected?: boolean, id: string; music_id: string }
+type Props = { name: string; cover: string; selected?: boolean, id: string; music_id: string, newly?: boolean }
 const props = defineProps<Props>()
 
 function addAlbum() {
@@ -12,7 +12,8 @@ function addAlbum() {
 }
 </script>
 <template>
-  <div class="flex items-center border-b border-baccent pr-3 h-11 hover:bg-bextra cursor-pointer" v-on:click="addAlbum">
+  <div class="flex items-center border-b border-baccent pr-3 h-11 hover:bg-bextra cursor-pointer" v-on:click="addAlbum"
+    :class="{ 'bg-baccent': newly === true }">
     <div class="min-w-8 h-8 flex justify-center items-center stroke-fsecondary">
       <span v-if="selected == true">
         <CheckIcon :size="20" color="defaultColor" />

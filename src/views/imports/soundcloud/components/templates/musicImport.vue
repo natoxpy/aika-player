@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted, ref } from 'vue'
+import { onMounted, ref, watch } from 'vue'
 import Artists from '../artists.vue'
 import AlbumMenu from '../albumSelectMenu/index.vue'
 import ArtistMenu from '../artistSelectMenu/index.vue'
@@ -59,12 +59,12 @@ function editArtist(e: MouseEvent) {
 
   menuToggled.value = 'artists'
 
-  const findRoot = (item: HTMLElement): HTMLElement | null => {
+  const findRoot = (item: HTMLElement, i = 0): HTMLElement | null => {
     if (item.id == `artist-menu-item-close-${props.id}`) return null
     if (item.id == `artist-menu-item-${props.id}`) return item
     let parent = item.parentElement
     if (!parent) return null
-    return findRoot(parent)
+    return findRoot(parent, i + 1)
   }
 
   if (artistWinListener.value != null) return

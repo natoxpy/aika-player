@@ -28,6 +28,8 @@ async function save() {
     await soundcloudImport(music);
   }
 
+  soundcloudStore.clear();
+
   router.push({ 'path': '/musics' });
 }
 

@@ -4,6 +4,7 @@ import MusicImport from './components/musicImport.vue'
 import MusicImportLoading from './components/musicImportLoading.vue'
 import { useSoundcloudImport } from '@/stores/imports/soundcloud.ts'
 const soundcloudStore = useSoundcloudImport();
+soundcloudStore.newSession()
 
 </script>
 <template>

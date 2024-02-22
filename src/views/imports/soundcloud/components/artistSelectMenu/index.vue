@@ -16,7 +16,7 @@ soundcloudStore.getArtistsForSelector(props.id).then(data => (artists.value = da
 const [artistInput, artistSearchInput] = useDebouncedWithValue('', 0)
 
 watch([soundcloudStore.artists], () => {
-  soundcloudStore.getArtistsForSelector(props.id, artistInput.value).then(data => (artists.value = data as ArtistsMeta[]))
+  soundcloudStore.getArtistsForSelector(props.id, artistSearchInput.value).then(data => (artists.value = data as ArtistsMeta[]))
 })
 
 watch([artistSearchInput], () => {
@@ -24,9 +24,20 @@ watch([artistSearchInput], () => {
   soundcloudStore.getArtistsForSelector(props.id, artistSearchValue).then(data => (artists.value = data as ArtistsMeta[]))
 })
 
+async function saveArtist() {
+  const name = artistSearchInput.value;
+  artistInput.value = ''
+
+  if (name === undefined) return
+
+  soundcloudStore.addNewArtists(name)
+  soundcloudStore.getArtistsForSelector(props.id).then(data => (artists.value = data as ArtistsMeta[]))
+}
+
+const idForFocus = `artist-menu-item-${props.id}`
 </script>
 <template>
-  <div :id="`artist-menu-item-${id}`"
+  <div :id="idForFocus"
     class="flex flex-col absolute bg-bprimary border border-baccent left-0 top-7 z-50 w-60 text-white rounded-primary">
 
     <div class="flex gap-1 items-center border-b border-baccent">
@@ -40,14 +51,16 @@ watch([artistSearchInput], () => {
         v-if="artists.findIndex(item => item.name === artistInput) == -1 && artists.length == 0">
         <span class="text-fsecondary italic">No artists</span>
       </div>
-      <ArtistItem :name="artist.name" :avatar="artist.avatar_url"
+      <ArtistItem :name="artist.name" :avatar="artist.avatar_url" :newly="artist.existedInDB == false"
         :artist_type="artist.featured == undefined ? undefined : artist.featured == true ? 'featured-artist' : 'artist'"
         :id="artist.id" :music_id="id" v-for="artist in artists.values()" />
+
       <div v-if="artists.findIndex(item => item.name === artistInput) == -1 && (artistInput ?? '').trim() !== ''"
-        class=" flex justify-center p-2 hover:bg-bextra">
+        class="flex justify-center p-2 hover:bg-bextra" v-on:click="saveArtist" role="button">
         <PlusIcon :size="24" />
         <span>Add {{ artistInput }}</span>
       </div>
+
     </div>
   </div>
 </template>
