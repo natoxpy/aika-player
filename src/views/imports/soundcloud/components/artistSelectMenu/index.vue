@@ -26,12 +26,12 @@ watch([artistSearchInput], () => {
 
 async function saveArtist() {
   const name = artistSearchInput.value;
-  artistInput.value = ''
 
   if (name === undefined) return
 
   soundcloudStore.addNewArtists(name)
   soundcloudStore.getArtistsForSelector(props.id).then(data => (artists.value = data as ArtistsMeta[]))
+  artistInput.value = ''
 }
 
 const idForFocus = `artist-menu-item-${props.id}`
@@ -55,8 +55,9 @@ const idForFocus = `artist-menu-item-${props.id}`
         :artist_type="artist.featured == undefined ? undefined : artist.featured == true ? 'featured-artist' : 'artist'"
         :id="artist.id" :music_id="id" v-for="artist in artists.values()" />
 
-      <div v-if="artists.findIndex(item => item.name === artistInput) == -1 && (artistInput ?? '').trim() !== ''"
-        class="flex justify-center p-2 hover:bg-bextra" v-on:click="saveArtist" role="button">
+      <div :class="{
+        'hidden': !(artists.findIndex(item => item.name === artistInput) === -1 && (artistInput ?? '').trim() !== '')
+      }" class="flex justify-center p-2 hover:bg-bextra" v-on:click="saveArtist" role="button">
         <PlusIcon :size="24" />
         <span>Add {{ artistInput }}</span>
       </div>
