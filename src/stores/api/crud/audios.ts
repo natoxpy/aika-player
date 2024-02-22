@@ -11,8 +11,10 @@ export async function getAudios(): Promise<Audio[]> {
   return res.data as Audio[];
 }
 
-export async function getAudio(audio_id: string): Promise<Audio> {
-  const res = await axios.get(`${API_LOCATION}/db/audios/${audio_id}/`);
+export async function getAudio(audio_id: string): Promise<Audio | undefined> {
+  const res = await axios.get(`${API_LOCATION}/db/audios/${audio_id}`);
+
+  if (res.status === 204) return;
   return res.data as Audio;
 }
 

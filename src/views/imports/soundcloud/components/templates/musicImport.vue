@@ -127,8 +127,8 @@ function editAlbum(e: MouseEvent) {
     <div class="flex flex-col select-none">
       <div class="text-lg line-clamp-2 min-h-[28px] overflow-hidden text-ellipsis">
         <div
-          class="select-text border-baccent outline-none min-h-[28px] whitespace-nowrap transition-all text-ellipsis overflow-hidden"
-          contenteditable="true" ref="titleSpan">
+          class="select-text border-baccent outline-none min-h-[28px] transition-all text-ellipsis overflow-hidden whitespace-nowrap"
+          contenteditable="true" ref="titleSpan" role="textbox">
           {{ title }}
         </div>
 

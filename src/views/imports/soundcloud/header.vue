@@ -3,9 +3,12 @@ import { ref } from 'vue';
 import HeaderTemplate from './templates/header.vue'
 import { useSoundcloudImport } from '@/stores/imports/soundcloud.ts'
 import SaveIcon from '@/components/icons/shadcn/save.vue';
+import { useRouter } from 'vue-router'
+import { soundcloudImport } from '@/stores/api/import/soundcloud';
 
 const soundcloudStore = useSoundcloudImport();
 const input_ref = ref<HTMLInputElement>();
+const router = useRouter();
 
 const onClick = async () => {
   let scloud_input = input_ref.value;
@@ -18,9 +21,14 @@ const onClick = async () => {
   scloud_input.value = ''
 }
 
-function save() {
+async function save() {
   const musics = soundcloudStore.getAll();
-  console.log(musics)
+
+  for (const music of musics) {
+    await soundcloudImport(music);
+  }
+
+  router.push({ 'path': '/musics' });
 }
 
 </script>
@@ -30,7 +38,8 @@ function save() {
     <template #subtitle> Import your favorite music from soundcloud </template>
     <template #save>
       <button v-on:click="save"
-        class='border border-baccent stroke-baccent hover:stroke-fprimary h-[34px] min-w-[38px] w-[38px] flex items-center justify-center rounded-primary transition-all'>
+        class='border border-baccent stroke-baccent hover:stroke-fprimary h-[34px] min-w-[38px] w-[38px] flex items-center justify-center rounded-primary transition-all'
+        v-if="soundcloudStore.musics.size != 0">
         <SaveIcon :size="20" color="defaultColor" />
       </button>
 
