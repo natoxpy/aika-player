@@ -29,7 +29,9 @@ async function saveArtist() {
 
   if (name === undefined) return
 
-  soundcloudStore.addNewArtists(name)
+  let newArtistId = soundcloudStore.addNewArtist(name)
+  soundcloudStore.addArtist(props.id, newArtistId, false)
+
   soundcloudStore.getArtistsForSelector(props.id).then(data => (artists.value = data as ArtistsMeta[]))
   artistInput.value = ''
 }

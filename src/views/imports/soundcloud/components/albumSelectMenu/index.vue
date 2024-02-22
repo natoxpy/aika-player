@@ -28,8 +28,11 @@ async function saveAlbum() {
   const name = albumSearchInput.value;
   if (name === undefined) return
 
-  soundcloudStore.addNewAlbums(name)
+  let newAlbumId = soundcloudStore.addNewAlbums(name)
+  soundcloudStore.addAlbum(props.id, newAlbumId, false)
+
   soundcloudStore.getAlbumsForSelector(props.id).then(data => (albums.value = data as AlbumsMeta[]))
+  albumInput.value = ''
 }
 
 
