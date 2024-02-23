@@ -5,8 +5,8 @@ import { useSoundcloudImport } from '@/stores/imports/soundcloud.ts'
 import SaveIcon from '@/components/icons/shadcn/save.vue';
 import { useRouter } from 'vue-router'
 import { soundcloudImport } from '@/stores/api/import/soundcloud';
-
 const soundcloudStore = useSoundcloudImport();
+
 const input_ref = ref<HTMLInputElement>();
 const router = useRouter();
 
@@ -23,9 +23,11 @@ const onClick = async () => {
 
 async function save() {
   const musics = soundcloudStore.getAll();
+  soundcloudStore.uploadingStateAll()
 
   for (const music of musics) {
     await soundcloudImport(music);
+    soundcloudStore.updateUploadState(music.id, 'uploaded');
   }
 
   soundcloudStore.clear();

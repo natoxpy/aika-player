@@ -7,7 +7,7 @@ import XIcon from '@/components/icons/shadcn/x.vue';
 import { useSoundcloudImport } from '@/stores/imports/soundcloud.ts'
 const soundcloudStore = useSoundcloudImport();
 
-type Props = { title: string, noFeatured?: boolean, id: string, disabledActions?: boolean }
+type Props = { title: string, noFeatured?: boolean, id: string, disabledActions?: boolean, uploadState: 'uploading' | 'uploaded' | null }
 const props = defineProps<Props>()
 
 const menuToggled = ref<'artists' | 'albums' | null>(null)
@@ -115,7 +115,15 @@ function editAlbum(e: MouseEvent) {
 
 </script>
 <template>
-  <div class="flex flex-col text-white h-[350px] min-w-[250px] w-[250px] rounded-primary">
+  <div class="flex relative flex-col text-white h-[350px] min-w-[250px] w-[250px] rounded-primary">
+    <div v-if="uploadState === 'uploaded'"
+      class="flex items-center justify-center absolute left-0 top-0 bg-[hsl(120,30%,30%,0.8)] w-full h-full z-50 rounded-primary">
+      <span class="text-fprimary text-xl">Uploaded</span>
+    </div>
+    <div v-if="uploadState === 'uploading'"
+      class="flex items-center justify-center absolute left-0 top-0 bg-[hsl(230,30%,30%,0.8)] w-full h-full z-50 rounded-primary">
+      <span class="text-fprimary text-xl">Uploading...</span>
+    </div>
     <div class="relative w-[250px] mb-4 min-h-[250px]">
       <div class="z-10 absolute w-[250px] h-[250px] rounded-primary overflow-hidden cursor-pointer">
         <slot name="cover" />

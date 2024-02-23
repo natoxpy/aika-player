@@ -48,6 +48,8 @@ export type AlbumsMeta = Album & {
 export const useSoundcloudImport = defineStore("soundcloud_imports", () => {
   const musics = ref<Map<string, string>>(new Map());
   const urls = ref<Map<string, string>>(new Map());
+  const requestCompute = ref(0);
+
   /* INFO:
    * First element {string} is the ID of the artist
    * Second element {boolean} is to identify the artists {false} and the featured artists {true}
@@ -79,6 +81,7 @@ export const useSoundcloudImport = defineStore("soundcloud_imports", () => {
 
   const sessionId = ref<string>();
   const importing = ref<Set<string>>(new Set());
+  const uploadState = ref<Map<string, 'uploading' | 'uploaded' | null>>(new Map());
 
   const updateTitle = (id: string, title: string) => {
     musics.value.set(id, title);
@@ -99,6 +102,7 @@ export const useSoundcloudImport = defineStore("soundcloud_imports", () => {
     musics.value.set(musicId, track.title);
     albums.value.set(musicId, []);
     covers.value.set(musicId, track.thumbnail);
+    uploadState.value.set(musicId, null);
 
     importing.value.delete(importId);
   };
@@ -106,6 +110,7 @@ export const useSoundcloudImport = defineStore("soundcloud_imports", () => {
   const addArtistFromPreview = async (musicId: string, name: string) => {
     const artistList = await allArtists();
     const artist = artistList.find((item) => item.name === name);
+
     if (artist) return artists.value.set(musicId, [[artist.id, false, true]]);
 
     const artistId = crypto.randomUUID();
@@ -114,7 +119,7 @@ export const useSoundcloudImport = defineStore("soundcloud_imports", () => {
   };
 
   const allArtistsMemoized = computed(async () => {
-    sessionId.value === undefined;
+    requestCompute.value;
     const artists: ArtistsMeta[] = [];
     const apiArtists = await getArtists();
 
@@ -147,7 +152,7 @@ export const useSoundcloudImport = defineStore("soundcloud_imports", () => {
   };
 
   const allAlbumsMemoized = computed(async () => {
-    sessionId.value === undefined;
+    requestCompute.value;
     const albums: AlbumsMeta[] = [];
     const apiAlbums = await getAlbums();
 
@@ -220,6 +225,16 @@ export const useSoundcloudImport = defineStore("soundcloud_imports", () => {
     addImportFromUrl,
     updateTitle,
     newSession: checkSession,
+    uploadState,
+
+    uploadingStateAll: () => {
+      const keys = Array.from(uploadState.value.keys());
+      keys.map(key => uploadState.value.set(key, 'uploading'))
+    },
+
+    updateUploadState: (musidId: string, state: 'uploading' | 'uploaded' | null) => {
+      uploadState.value.set(musidId, state)
+    },
 
     setImageArrayBuffer: (musicId: string, arrayBuffer: ArrayBuffer) => {
       const blob = new Blob([arrayBuffer]);
@@ -234,8 +249,10 @@ export const useSoundcloudImport = defineStore("soundcloud_imports", () => {
       albums.value.clear();
       covers.value.clear();
       imageArrayBuffers.value.clear();
-
-      sessionId.value = undefined;
+      uploadState.value.clear();
+      artistsNotIndb.value.clear();
+      albums.value.clear();
+      requestCompute.value++;
     },
 
     addNewArtist: (name: string) => {
@@ -271,17 +288,18 @@ export const useSoundcloudImport = defineStore("soundcloud_imports", () => {
 
         const artistListNoIndb = (artists.value.get(musicId) ?? [])
           .filter((item) => item[1] === false && item[2] === false)
-          .map((item) => item[0]);
+          .map((item) => artistsNotIndb.value.get(item[0]) ?? "");
 
         const featuredArtistListNotIndb = (artists.value.get(musicId) ?? [])
           .filter((item) => item[1] === true && item[2] === false)
-          .map((item) => item[0]);
+          .map((item) => artistsNotIndb.value.get(item[0]) ?? "");
 
         const imageArrayBuffer = imageArrayBuffers.value.get(musicId);
 
         const albumListNoIndb = Array.from(albumsNotIndb.value.values());
 
         importMusics.push({
+          id: musicId,
           title,
           image_src: coverUrl,
           image_array_buffer: imageArrayBuffer,

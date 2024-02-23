@@ -17,7 +17,8 @@ soundcloudStore.newSession()
 
       </div>
       <MusicImport :title="item" :cover="soundcloudStore.covers.get(id) as string" artist="No Artist"
-        :featured_artists="[]" album="No Album" :id="id" v-for="[id, item] in soundcloudStore.musics.entries()" />
+        :upload-state="soundcloudStore.uploadState.get(id) as 'uploading' | 'uploaded' | null" :featured_artists="[]"
+        album="No Album" :id="id" v-for="[id, item] in soundcloudStore.musics.entries()" />
       <MusicImportLoading :id="id" v-for="[id] in soundcloudStore.importing.entries()" />
     </template>
   </BodyTemplate>

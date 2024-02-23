@@ -26,6 +26,7 @@ export type SoundcloudImport = {
 };
 
 export type SoundcloudImportMusic = {
+  id: string,
   title: string;
   image_src: string;
   image_array_buffer?: ArrayBuffer;

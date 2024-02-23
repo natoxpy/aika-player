@@ -1,34 +1,34 @@
 import axios from "axios";
-import { API_LOCATION } from "..";
+import { API_LOCATION, DEFAULT_IMAGE_FILE } from "..";
 
 export type Album = {
-	id: string;
-	name: string;
-	cover?: string;
+  id: string;
+  name: string;
+  cover?: string;
 };
 
 export async function getAlbums(): Promise<Album[]> {
-	const res = await axios.get(`${API_LOCATION}/db/albums/`);
-	return res.data as Album[];
+  const res = await axios.get(`${API_LOCATION}/db/albums/`);
+  return res.data as Album[];
 }
 
 export async function getAlbum(artist_id: string): Promise<Album> {
-	const res = await axios.get(`${API_LOCATION}/db/albums/${artist_id}`);
-	return res.data as Album;
+  const res = await axios.get(`${API_LOCATION}/db/albums/${artist_id}`);
+  return res.data as Album;
 }
 
 export async function createAlbum(
-	name: string,
-	cover?: string,
+  name: string,
+  cover?: string,
 ): Promise<Album> {
-	const res = await axios.post(`${API_LOCATION}/db/albums/`, {
-		name,
-		cover,
-	});
+  const res = await axios.post(`${API_LOCATION}/db/albums/`, {
+    name,
+    cover,
+  });
 
-	return res.data as Album;
+  return res.data as Album;
 }
 
 export function getAlbumDefaultCover() {
-	return `${API_LOCATION}/cdn/30305764-14d6-4060-95a5-2eb820cf6357`;
+  return DEFAULT_IMAGE_FILE;
 }

@@ -12,6 +12,7 @@ type Props = {
   artist: string
   cover: string
   featured_artists: string[]
+  uploadState: 'uploading' | 'uploaded' | null,
   album: string
   id: string
 }
@@ -31,7 +32,7 @@ watch([soundcloudStore.albums], () => {
 })
 </script>
 <template>
-  <musicImportTemplate :title="title" :no-featured="artistsFeat.length == 0" :id="id">
+  <musicImportTemplate :title="title" :no-featured="artistsFeat.length == 0" :id="id" :upload-state="uploadState">
     <template #cover>
       <div class="w-full h-full bg-cover bg-center" :style="{
         backgroundImage: `url(${cover})`

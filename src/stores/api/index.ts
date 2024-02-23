@@ -54,9 +54,12 @@ export async function getCover(image_id: string) {
     return `${API_LOCATION}/cdn/${data.file_id}`;
   }
 
-  return `${API_LOCATION}/cdn/30305764-14d6-4060-95a5-2eb820cf6357`;
+  return DEFAULT_IMAGE_FILE
 }
 
 export function wrapFileId(id: string) {
   return `${API_LOCATION}/cdn/${id}`;
 }
+
+export const DEFAULT_IMAGE_FILE = `${API_LOCATION}/cdn/0b892f58-584d-45a0-9a34-818159b32565`;
+
