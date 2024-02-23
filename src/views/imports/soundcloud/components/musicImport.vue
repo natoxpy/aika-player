@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import musicImportTemplate from './templates/musicImport.vue'
 import Artist from './artist.vue'
+import CoverDropzone from './coverDropzone.vue'
 
 import { ref, watch } from 'vue';
 import { useSoundcloudImport, type ArtistsMeta, type AlbumsMeta } from '@/stores/imports/soundcloud.ts'
@@ -35,6 +36,9 @@ watch([soundcloudStore.albums], () => {
       <div class="w-full h-full bg-cover bg-center" :style="{
         backgroundImage: `url(${cover})`
       }" />
+    </template>
+    <template #over-cover>
+      <CoverDropzone :id="id" />
     </template>
     <template #artists>
       <span v-if="artists?.length == 0" class="italic text-fsecondary">No Artists</span>

@@ -117,7 +117,7 @@ function editAlbum(e: MouseEvent) {
 <template>
   <div class="flex flex-col text-white h-[350px] min-w-[250px] w-[250px] rounded-primary">
     <div class="relative w-[250px] mb-4 min-h-[250px]">
-      <div class="z-10 absolute w-[250px] h-[250px] rounded-primary overflow-hidden">
+      <div class="z-10 absolute w-[250px] h-[250px] rounded-primary overflow-hidden cursor-pointer">
         <slot name="cover" />
       </div>
       <div class="z-10 absolute w-[250px] h-[250px]" v-on:dblclick="EditCover">
