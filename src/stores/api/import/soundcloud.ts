@@ -6,6 +6,10 @@ import { createAlbum } from "../crud/albums";
 export type SoundcloudTrack = {
   title: string;
   url: string;
+  author: {
+    avatar_url: string;
+    username: string;
+  };
   thumbnail: string;
   duration: { secs: number };
   media: string;
