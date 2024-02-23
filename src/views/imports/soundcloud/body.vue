@@ -10,9 +10,11 @@ soundcloudStore.newSession()
 <template>
   <BodyTemplate>
     <template #imports>
-      <div class="border border-bextra flex items-center justify-center w-full h-80"
+      <div class="flex items-center justify-center w-full h-80"
         v-if="soundcloudStore.musics.size == 0 && soundcloudStore.importing.size == 0">
-        <span class="text-fsecondary text-2xl">No musics</span>
+        <p class="mb-2 text-sm text-gray-500 dark:text-gray-200"><span class="font-semibold">Drag and Drop</span> or
+          submit in souncloud url box</p>
+
       </div>
       <MusicImport :title="item" :cover="soundcloudStore.covers.get(id) as string" artist="No Artist"
         :featured_artists="[]" album="No Album" :id="id" v-for="[id, item] in soundcloudStore.musics.entries()" />
