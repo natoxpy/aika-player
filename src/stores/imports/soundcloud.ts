@@ -71,6 +71,10 @@ export const useSoundcloudImport = defineStore("soundcloud_imports", () => {
    * Value element {string} album name
    */
   const albumsNotIndb = ref<Map<string, string>>(new Map());
+  /* INFO:
+   * First element, UUID v4
+   * Second element, exists in DB
+   */
   const albums = ref<Map<string, Array<[string, boolean]>>>(new Map());
   const covers = ref<Map<string, string>>(new Map());
   /* INFO:
@@ -251,7 +255,7 @@ export const useSoundcloudImport = defineStore("soundcloud_imports", () => {
       imageArrayBuffers.value.clear();
       uploadState.value.clear();
       artistsNotIndb.value.clear();
-      albums.value.clear();
+      albumsNotIndb.value.clear();
       requestCompute.value++;
     },
 
@@ -280,7 +284,7 @@ export const useSoundcloudImport = defineStore("soundcloud_imports", () => {
           .map((item) => item[0]);
 
         const albumList = (albums.value.get(musicId) ?? [])
-          .filter((item) => item[1] === false)
+          .filter((item) => item[1] === true)
           .map((item) => item[0]);
 
         const soundcloud_url = urls.value.get(musicId) ?? "";
@@ -296,7 +300,9 @@ export const useSoundcloudImport = defineStore("soundcloud_imports", () => {
 
         const imageArrayBuffer = imageArrayBuffers.value.get(musicId);
 
-        const albumListNoIndb = Array.from(albumsNotIndb.value.values());
+        const albumListNotIndb = (albums.value.get(musicId) ?? [])
+          .filter((item) => item[1] === false)
+          .map((item) => albumsNotIndb.value.get(item[0]) ?? "");
 
         importMusics.push({
           id: musicId,
@@ -309,7 +315,7 @@ export const useSoundcloudImport = defineStore("soundcloud_imports", () => {
           soundcloud_url,
           artists_not_in_db: artistListNoIndb,
           featured_artists_not_in_db: featuredArtistListNotIndb,
-          albums_not_in_db: albumListNoIndb,
+          albums_not_in_db: albumListNotIndb,
         });
       }
 
@@ -348,6 +354,9 @@ export const useSoundcloudImport = defineStore("soundcloud_imports", () => {
 
       const artistList = artists.value.get(musicId) ?? [];
       artists.value.set(musicId, artistList);
+
+      if (artistsNotIndb.value.get(artistId)) existsIndb = false
+
       artistList.push([artistId, featured, existsIndb]);
     },
 
@@ -441,6 +450,7 @@ export const useSoundcloudImport = defineStore("soundcloud_imports", () => {
 
     addAlbum: (musicId: string, albumId: string, existsIndb = true) => {
       const artistList = albums.value.get(musicId) ?? [];
+      if (albumsNotIndb.value.get(albumId)) existsIndb = false
       artistList.push([albumId, existsIndb]);
     },
 
