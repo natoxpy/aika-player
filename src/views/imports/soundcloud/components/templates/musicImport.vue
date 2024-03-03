@@ -1,70 +1,131 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { onMounted, ref, watch } from 'vue'
 import Artists from '../artists.vue'
 import AlbumMenu from '../albumSelectMenu/index.vue'
 import ArtistMenu from '../artistSelectMenu/index.vue'
+import XIcon from '@/components/icons/shadcn/x.vue';
+import { useSoundcloudImport } from '@/stores/imports/soundcloud.ts'
+const soundcloudStore = useSoundcloudImport();
 
-type Props = { title: string, noFeatured?: boolean, albumMenu?: boolean, artistMenu?: boolean }
-defineProps<Props>()
+type Props = { title: string, noFeatured?: boolean, id: string, disabledActions?: boolean, uploadState: 'uploading' | 'uploaded' | null }
+const props = defineProps<Props>()
+
+const menuToggled = ref<'artists' | 'albums' | null>(null)
 
 const titleSpan = ref<HTMLDivElement>()
+const artistWinListener = ref<(e: MouseEvent) => void>()
+const albumWinListener = ref<(e: MouseEvent) => void>()
 
 function EditCover() {
+  if (props.disabledActions === true) return
+  // TODO 
   console.log('edit cover')
 }
 
-function placeCaretAtEnd(el: any) {
-  el.focus()
-  if (typeof window.getSelection != 'undefined' && typeof document.createRange != 'undefined') {
-    var range = document.createRange()
-    range.selectNodeContents(el)
-    range.collapse(false)
-    var sel: any = window.getSelection()
-    sel.removeAllRanges()
-    sel.addRange(range)
-  } else if (typeof (document.body as any).createTextRange != 'undefined') {
-    var textRange = (document.body as any).createTextRange()
-    textRange.moveToElementText(el)
-    textRange.collapse(false)
-    textRange.select()
+
+onMounted(() => {
+  if (props.disabledActions === true) return
+  const titleElement = titleSpan.value;
+
+  if (!titleElement) return
+
+  titleElement.onfocus = () => {
+    titleElement.style.borderBottom = '1px solid hsl(0, 0%, 50%, 0.5)'
+    titleElement.style.whiteSpace = 'normal'
   }
+
+  titleElement.onblur = () => {
+    titleElement.style.borderBottom = ''
+    titleElement.style.whiteSpace = 'nowrap'
+
+    if (titleElement.innerText.trim() == '') {
+      titleElement.innerText = 'No title'
+    } else {
+      titleElement.innerText = titleElement.innerText.replace(/\n/g, ' ').trim()
+      soundcloudStore.updateTitle(props.id, titleElement.innerText);
+    }
+  }
+})
+
+function closeMenu(e: MouseEvent) {
+  if (props.disabledActions === true) return
+  menuToggled.value = null;
 }
 
-function EditTitle() {
-  const element = titleSpan.value
-  if (!element) return
+function editArtist(e: MouseEvent) {
+  if (props.disabledActions === true) return
+  if (e.type == 'contextmenu')
+    e.preventDefault()
 
-  element.contentEditable = 'true'
-  element.style.borderBottom = '1px solid hsl(0, 0%, 50%, 0.5)'
-  element.style.whiteSpace = 'normal'
+  menuToggled.value = 'artists'
 
-  placeCaretAtEnd(element)
+  const findRoot = (item: HTMLElement, i = 0): HTMLElement | null => {
+    if (item.id == `artist-menu-item-close-${props.id}`) return null
+    if (item.id == `artist-menu-item-${props.id}`) return item
+    let parent = item.parentElement
+    if (!parent) return null
+    return findRoot(parent, i + 1)
+  }
 
-  element.onblur = () => (
-    (element.contentEditable = 'false'),
-    (element.style.borderBottom = ''),
-    (element.style.whiteSpace = 'nowrap'),
-    element.innerText.trim() == ''
-      ? (element.innerText = 'No title')
-      : (element.innerText = element.innerText.replace(/\n/g, ' ').trim()),
-    console.log(element.innerText)
-  )
+  if (artistWinListener.value != null) return
+
+  artistWinListener.value = (ce: MouseEvent) => {
+    if (menuToggled.value != 'artists') return
+    const root = findRoot(ce.target as HTMLElement);
+
+    if (root != null)
+      return;
+
+    menuToggled.value = null;
+  }
+
+  window.addEventListener('click', artistWinListener.value)
+
 }
 
-function EditArtists(e: MouseEvent) {
-  console.log('open artists menu')
+function editAlbum(e: MouseEvent) {
+  if (props.disabledActions === true) return
+  if (e.type == 'contextmenu')
+    e.preventDefault()
+
+  menuToggled.value = 'albums'
+
+  const findRoot = (item: HTMLElement): HTMLElement | null => {
+    if (item.id == `album-menu-item-close-${props.id}`) return null
+    if (item.id == `album-menu-item-${props.id}`) return item
+    let parent = item.parentElement
+    if (!parent) return null
+    return findRoot(parent)
+  }
+
+  if (albumWinListener.value != null) return
+
+  albumWinListener.value = (ce: MouseEvent) => {
+    if (menuToggled.value != 'albums') return;
+    const root = findRoot(ce.target as HTMLElement);
+
+    if (root != null)
+      return;
+
+    menuToggled.value = null;
+  }
+
+  window.addEventListener('click', albumWinListener.value)
 }
 
-function EditAlbum(e: MouseEvent) {
-  console.log('open albums menu')
-}
 </script>
 <template>
-  <div
-    class="flex flex-col text-white h-[350px] min-w-[250px] w-[250px] rounded-primary"
-  >
+  <div class="flex relative flex-col text-white h-[350px] min-w-[250px] w-[250px] rounded-primary">
+    <div v-if="uploadState === 'uploaded'"
+      class="flex items-center justify-center absolute left-0 top-0 bg-[hsl(120,30%,30%,0.8)] w-full h-full z-50 rounded-primary">
+      <span class="text-fprimary text-xl">Uploaded</span>
+    </div>
+    <div v-if="uploadState === 'uploading'"
+      class="flex items-center justify-center absolute left-0 top-0 bg-[hsl(230,30%,30%,0.8)] w-full h-full z-50 rounded-primary">
+      <span class="text-fprimary text-xl">Uploading...</span>
+    </div>
     <div class="relative w-[250px] mb-4 min-h-[250px]">
-      <div class="z-10 absolute w-[250px] h-[250px] rounded-primary overflow-hidden">
+      <div class="z-10 absolute w-[250px] h-[250px] rounded-primary overflow-hidden cursor-pointer">
         <slot name="cover" />
       </div>
       <div class="z-10 absolute w-[250px] h-[250px]" v-on:dblclick="EditCover">
@@ -72,19 +133,16 @@ function EditAlbum(e: MouseEvent) {
       </div>
     </div>
     <div class="flex flex-col select-none">
-      <div
-        class="text-lg line-clamp-2 min-h-[28px] overflow-hidden text-ellipsis"
-        v-on:dblclick="EditTitle"
-      >
+      <div class="text-lg line-clamp-2 min-h-[28px] overflow-hidden text-ellipsis">
         <div
-          class="select-text border-baccent outline-none min-h-[28px] transition-all text-ellipsis overflow-hidden"
-          ref="titleSpan"
-          v-on:dblclick="EditTitle"
-        >
+          class="select-text border-baccent outline-none min-h-[28px] transition-all text-ellipsis overflow-hidden whitespace-nowrap"
+          contenteditable="true" ref="titleSpan" role="textbox">
           {{ title }}
         </div>
+
       </div>
-      <div class="flex relative gap-1" v-on:dblclick="EditArtists">
+      <div :id="`artist-menu-item-${id}`" role="button" class="flex relative gap-1"
+        :class="{ 'cursor-pointer': disabledActions === false || disabledActions === undefined }" v-on:click="editArtist">
         <div class="flex w-full overflow-hidden">
           <Artists :noFeatured="noFeatured">
             <template #artists>
@@ -96,15 +154,36 @@ function EditAlbum(e: MouseEvent) {
             </template>
           </Artists>
         </div>
-        <div v-if="artistMenu">
-          <ArtistMenu />
-        </div>
-        <div v-if="albumMenu">
-          <AlbumMenu />
+        <div v-if="menuToggled == 'artists'">
+          <ArtistMenu :id="id">
+            <template #search-right-icon>
+              <span :id="`artist-menu-item-close-${id}`"
+                class="stroke-fsecondary hover:stroke-fprimary active:stroke-fprimary" role="button"
+                v-on:click="closeMenu">
+                <XIcon :size="24" color="defaultColor" />
+              </span>
+            </template>
+
+          </ArtistMenu>
         </div>
       </div>
-      <div class="flex gap-1 overflow-hidden" v-on:dblclick="EditAlbum">
-        <slot name="album" />
+      <div :id="`album-menu-item-${id}`" :role="menuToggled == null ? 'button' : ''" class="flex gap-1 relative "
+        :class="{ 'cursor-pointer': disabledActions === false || disabledActions === undefined }" v-on:click="editAlbum"
+        v-on:contextmenu="editAlbum">
+        <div class="flex overflow-hidden gap-2">
+          <slot name="album" />
+        </div>
+        <div v-if="menuToggled == 'albums'">
+          <AlbumMenu :id="id">
+            <template #search-right-icon>
+              <span :id="`album-menu-item-close-${id}`"
+                class="stroke-fsecondary hover:stroke-fprimary active:stroke-fprimary" role="button"
+                v-on:click="closeMenu">
+                <XIcon :size="24" color="defaultColor" />
+              </span>
+            </template>
+          </AlbumMenu>
+        </div>
       </div>
     </div>
   </div>

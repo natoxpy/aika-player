@@ -1,16 +1,34 @@
 <script setup lang="ts">
 import MicIcon from '@/components/icons/shadcn/mic.vue'
 import StarIcon from '@/components/icons/shadcn/star.vue'
+import { useSoundcloudImport } from '@/stores/imports/soundcloud.ts'
+const soundcloudStore = useSoundcloudImport();
 
-type Props = { name: string; avatar: string; artist_type?: 'artist' | 'featured-artist' }
-defineProps<Props>()
+type Props = { name: string; avatar: string; artist_type?: 'artist' | 'featured-artist', music_id: string, id: string, newly?: boolean }
+const props = defineProps<Props>()
+
+function addArtist() {
+  if (props.artist_type == 'artist') return addFeaturedArtist()
+  let hasArtist = soundcloudStore.hasArtist(props.music_id, props.id)
+
+  if (hasArtist) return soundcloudStore.removeArtist(props.music_id, props.id)
+
+  soundcloudStore.addArtist(props.music_id, props.id, undefined, props.newly === false)
+}
+
+function addFeaturedArtist() {
+  if (props.artist_type == 'featured-artist') {
+    return
+  }
+
+  soundcloudStore.setArtist(props.music_id, props.id, true)
+}
+
 </script>
 <template>
-  <div
-    class="flex items-center border-b border-baccent pr-2 h-11 hover:bg-bextra cursor-pointer"
-    v-on:click="() => console.log('set artist')"
-    v-on:dbclick="() => console.log('set featured artist')"
-  >
+  <div role="button"
+    class="flex items-center border-b border-baccent pr-2 h-11 hover:bg-bextra cursor-pointer transition-colors"
+    :class="{ 'bg-baccent': newly === true }" v-on:click="addArtist" v-on:dbclick="addFeaturedArtist">
     <div class="w-8 h-8 flex justify-center items-center stroke-fsecondary">
       <span v-if="artist_type == 'artist'">
         <MicIcon :size="20" color="defaultColor" />
