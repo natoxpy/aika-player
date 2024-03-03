@@ -47,7 +47,7 @@ export async function getMusicArtist(_artist_id: string): Promise<MusicArtist> {
 }
 
 /**
- * @returns {string} uri to cover cdn endpoint
+ * uri to cover cdn endpoint
  */
 export async function getCover(image_id: string) {
     const res = await fetch(`${API_LOCATION}/db/musics/${image_id}/cover`)

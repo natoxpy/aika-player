@@ -6,7 +6,6 @@ import Musics from '@/views/musics/index.vue'
 import Albums from '@/views/albums.vue'
 import Artists from '@/views/artists.vue'
 import SoundcloudImportsPage from '@/views/imports/soundcloud/page.vue'
-import Testpage from '@/views/test.vue'
 import ImportationsPage from '../views/imports/generic/page.vue'
 
 const router = createRouter({
@@ -16,11 +15,6 @@ const router = createRouter({
             path: '/import',
             name: 'import',
             component: ImportationsPage as any
-        },
-        {
-            path: '/test',
-            name: 'test',
-            component: Testpage as any
         },
         {
             path: '/',

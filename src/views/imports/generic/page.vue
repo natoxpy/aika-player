@@ -8,14 +8,17 @@ import { useArtistList } from '@/stores/imports/database/artists'
 // Loads artist in database
 useArtistList()
 </script>
+
 <template>
     <PageTemplate>
         <template #header>
             <Header />
         </template>
+
         <template #body>
             <Body />
         </template>
+
         <template #dropzone>
             <BodyDropzone> </BodyDropzone>
         </template>

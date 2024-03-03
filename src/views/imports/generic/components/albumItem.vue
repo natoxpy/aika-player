@@ -20,11 +20,6 @@ function toggleSelect() {
 
     albumList.selectAlbum(props.musicId, props.id)
 }
-
-// function addAlbum() {
-//     if (props.selected) return soundcloudStore.removeAlbum(props.music_id, props.id)
-//     soundcloudStore.addAlbum(props.music_id, props.id)
-// }
 </script>
 <template>
     <div
