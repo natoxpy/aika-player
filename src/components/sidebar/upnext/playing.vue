@@ -5,7 +5,7 @@ defineProps<Props>()
 </script>
 <template>
     <PlayingTemplate
-        cover="http://[::1]:8000/cdn/02b5af9f-badd-4cd5-8e9c-5068101d59a6"
+        cover="http://[::1]:8000/cdn/0b892f58-584d-45a0-9a34-818159b32565"
         :open="open"
         :on-nextup-menu="onNextupMenu"
     >
