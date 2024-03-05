@@ -1,4 +1,5 @@
 <script setup lang="ts">
+// import PageControls from './components/controls/index.vue'
 import PageControls from './components/controls/index.vue'
 import Sidebar from './components/sidebar/index.vue'
 import DragWrapper from './dragWrapper.vue'
@@ -13,7 +14,7 @@ import DragWrapper from './dragWrapper.vue'
                 </div>
                 <div class="w-full flex-shrink-1 relative">
                     <div class="absolute bottom-0 w-full h-[65px]">
-                        <!-- <PageControls /> -->
+                        <PageControls />
                     </div>
                     <RouterView />
                 </div>
