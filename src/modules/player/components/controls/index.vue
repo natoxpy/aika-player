@@ -5,11 +5,13 @@ import VolumeButtons from './VolumeButtons.vue'
 </script>
 
 <template>
-  <div class="border-t border-baccent w-full gap-4 h-full flex justify-center items-center">
-    <ActionButtons />
-    <div class="w-1 h-1 rounded-full bg-gray-400" />
-    <TimeSeeker />
-    <div class="w-1 h-1 rounded-full bg-gray-400" />
-    <VolumeButtons />
-  </div>
+    <div
+        class="border-t border-baccent w-full gap-4 h-full flex justify-center items-center bg-bprimary"
+    >
+        <ActionButtons />
+        <div class="w-1 h-1 rounded-full bg-gray-400" />
+        <TimeSeeker />
+        <div class="w-1 h-1 rounded-full bg-gray-400" />
+        <VolumeButtons />
+    </div>
 </template>
