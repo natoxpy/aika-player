@@ -1,6 +1,8 @@
 import { defineStore } from 'pinia'
 import { None, Some } from 'ts-results'
 import { reactive } from 'vue'
+import { useContextRegistry } from './contextRegistry'
+import { getCover, getMusicAudio, getMusics, wrapFileId } from '@/api'
 
 /*INFO:
  * Music Registry Contains a list of all musics the client its
@@ -32,10 +34,16 @@ export class RecordQueries {
     }
 }
 
-export const useMusicRegistry = defineStore('musicContext', () => {
+function updateDefaultRegistries(musicId: string) {
+    let contextRegistry = useContextRegistry()
+    contextRegistry.for('library').add(musicId)
+}
+
+export const useMusicRegistry = defineStore('musicRegistry', () => {
     const musicList = reactive(new Map<string, MusicRecord>())
 
     const addRecord = (musicId: string, record: MusicRecord) => {
+        updateDefaultRegistries(musicId)
         if (musicList.has(musicId)) return false
         musicList.set(musicId, record)
         return true
@@ -62,11 +70,34 @@ export const useMusicRegistry = defineStore('musicContext', () => {
         return arr.filter(predicate)
     }
 
+    const syncRecord = async () => {
+        for (const music of await getMusics()) {
+            if (musicList.has(music.id)) continue
+
+            const audio = await getMusicAudio(music.id)
+            const cover = await getCover(music.id)
+
+            if (!audio) continue
+            const audioCDN = wrapFileId(audio.file_id)
+
+            addRecord(music.id, {
+                title: music.name,
+                audio: audioCDN,
+                cover: cover,
+                featuredArtists: new Set(),
+                artists: new Set(),
+                albums: new Set()
+            })
+        }
+    }
+
     return {
+        musicList,
         add: addRecord,
-        delete: deleteRecord,
+        deletes: deleteRecord,
         get: getRecord,
         update: updateRecord,
-        query: queryRecord
+        query: queryRecord,
+        sync: syncRecord
     }
 })

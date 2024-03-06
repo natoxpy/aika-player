@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia'
-import { None, Some } from 'ts-results'
+import { Err, None, Ok, Result, Some } from 'ts-results'
 import { reactive } from 'vue'
 /* INFO:
  * Context engine defines an area of related musics that
@@ -27,29 +27,49 @@ export class MusicContextList {
     }
 }
 
-export const useMusicContext = defineStore('musicContext', () => {
+export const useContextRegistry = defineStore('contextRegistry', () => {
     const contextList = reactive(new Map<string, MusicContextList>())
 
-    const createContext = () => {
-        let id = crypto.randomUUID()
+    const createContext = (nameId?: string): Result<string, null> => {
+        let id = crypto.randomUUID() as string
+        if (nameId) id = nameId
+
+        if (contextList.has(id)) return Err(null)
+
         contextList.set(id, new MusicContextList())
-        return id
+        return Ok(id)
     }
 
     const deleteContext = (contextId: string) => {
         return contextList.delete(contextId)
     }
 
-    const forContext = (contextId: string) => {
+    const getContext = (contextId: string) => {
         let musicContext = contextList.get(contextId)
 
         if (musicContext) return Some(musicContext)
         return None
     }
 
+    /// Ensures it always exists
+    const forContext = (contextId: string) => {
+        let id = crypto.randomUUID() as string
+        if (contextId) id = contextId
+
+        const context = contextList.get(id)
+        if (context) return context
+
+        const newContext = new MusicContextList()
+        contextList.set(id, newContext)
+
+        return contextList.get(id)!
+    }
+
     return {
+        contextList,
         create: createContext,
         delete: deleteContext,
+        get: getContext,
         for: forContext
     }
 })

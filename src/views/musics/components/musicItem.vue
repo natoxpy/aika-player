@@ -1,28 +1,48 @@
 <script setup lang="ts">
+import { useAudioProvider } from '@/modules/audio'
 import Author from './artist.vue'
 import Music from './music.vue'
-import { ref, onMounted } from 'vue'
-import { getCover, getAudio, getMusicAudio } from '@/stores/api/index.ts'
+import { useMusicRegistry } from '@/modules/musicRegistry'
+import { usePlayerManager } from '@/modules/player'
+
+const audioProvider = useAudioProvider()
+const playerManager = usePlayerManager()
+const musicRegistry = useMusicRegistry()
+const player = playerManager.player
 
 type Props = {
-    id: string
-    name: string
+    musicId: string
+    contextId: string
+    title: string
+    audio: string
+    cover: string
 }
 
 const props = defineProps<Props>()
 
-const cover = ref()
-const audio = ref()
+function play() {
+    const cursor = player.getCursor()
+    if (cursor.some && cursor.val == props.musicId) {
+        audioProvider.play()
+    } else {
+        playerManager.playFromContext(props.musicId, props.contextId)
+    }
+}
 
-onMounted(async () => {
-    cover.value = await getCover(props.id)
-    audio.value = (await getMusicAudio(props.id))?.file_id
-})
+function pause() {
+    audioProvider.pause()
+}
 </script>
 
 <template>
-    <Music :cover="cover" :audio="audio">
-        <template #title> {{ name }} </template>
+    <Music
+        :cover="cover"
+        :audio="audio"
+        @play="play"
+        @pause="pause"
+        :active="player.cursorEq(musicId)"
+    >
+        <template #title> {{ title }} </template>
         <template #author>
             <Author> Mili </Author>
         </template>

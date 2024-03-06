@@ -7,16 +7,19 @@ import RepeatIcon from '@/components/icons/RepeatIcon.vue'
 import RepeatAllIcon from '@/components/icons/RepeatAllIcon.vue'
 import RepeatOneIcon from '@/components/icons/RepeatOneIcon.vue'
 import { onMounted } from 'vue'
+import { useAudioProvider } from '@/modules/audio'
 // import { audioStore } from '../../stores/audio'
 
 // let audioManager = audioStore()
 
-function Play() {
-    // audioManager.play()
+let audioProvider = useAudioProvider()
+
+function pause() {
+    audioProvider.pause()
 }
 
-function Pause() {
-    // audioManager.pause()
+function play() {
+    audioProvider.play()
 }
 </script>
 <template>
@@ -24,10 +27,13 @@ function Pause() {
         <button class="p-2">
             <PreviousButton :size="20" />
         </button>
-        <button @click="// audioManager.paused ? Play() : Pause()" class="p-2">
-            <PauseButton v-if="// !audioManager.paused" :size="20" />
-            <PlayButton v-else :size="20" />
+        <button class="p-2" v-if="audioProvider.paused" @click="play">
+            <PlayButton :size="20" />
         </button>
+        <button class="p-2" v-else @click="pause">
+            <PauseButton :size="20" />
+        </button>
+
         <button class="p-2">
             <NextButton :size="20" />
         </button>

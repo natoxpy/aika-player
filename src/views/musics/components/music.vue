@@ -3,26 +3,46 @@ import MusicTemplate from './templates/music.vue'
 import PlayIcon from '@/components/icons/shadcn/play.vue'
 import PauseIcon from '@/components/icons/shadcn/pause.vue'
 import MoreHorizontalIcon from '@/components/icons/shadcn/moreHorizontal.vue'
-import { ref } from 'vue'
+import { useMusicRegistry } from '@/modules/musicRegistry'
+import { usePlayerManager } from '@/modules/player'
+import { useAudioProvider } from '@/modules/audio'
+import { ref, watch } from 'vue'
+import { audioStore } from '@/stores/audio/index.ts'
 
-const pause = ref(false)
+const playerManager = usePlayerManager()
+const audioProvider = useAudioProvider()
+const musicRegistry = useMusicRegistry()
+const player = playerManager.player
 
-interface Props {
+type Props = {
     cover: string
     audio?: string
+    active: boolean
 }
 
-import { audioStore } from '@/stores/audio/index.ts'
-let audioManager = audioStore()
+const props = withDefaults(defineProps<Props>(), {
+    cover: 'no image',
+    audio: undefined
+})
+const active = ref(props.active && !audioProvider.paused ? true : props.active)
+const playing = ref(props.active && !audioProvider.paused ? true : false)
 
-const props = withDefaults(defineProps<Props>(), { cover: 'no image', audio: undefined })
+watch([audioProvider], () => {
+    active.value = props.active && !audioProvider.paused ? true : props.active
+    playing.value = props.active && !audioProvider.paused ? true : false
+})
+
+let audioManager = audioStore()
 
 function play() {
     if (props.audio === undefined) console.log('this music does not have an audio file')
-    console.log(props.audio)
-
-    audioManager.setSrc(props.audio)
+    // audioManager.setSrc(props.audio)
 }
+
+defineEmits<{
+    (e: 'play'): void
+    (e: 'pause'): void
+}>()
 </script>
 <template>
     <MusicTemplate>
@@ -35,7 +55,7 @@ function play() {
         <template #over-cover>
             <div
                 class="p-4 flex flex-col justify-between w-full h-full opacity-0 hover:opacity-100 hover:bg-[hsla(0,0%,30%,0.3)] transition-all"
-                :class="{ 'opacity-100 bg-[hsla(0,0%,30%,0.3)]': pause }"
+                :class="{ 'opacity-100 bg-[hsla(0,0%,30%,0.3)]': active }"
             >
                 <div class="flex justify-end">
                     <button
@@ -47,10 +67,17 @@ function play() {
                 <div>
                     <button
                         class="p-1 rounded-primary bg-[hsl(240,4%,16%,0.6)] hover:bg-[hsl(240,4%,16%,0.8)] transition-all"
-                        v-on:click="play"
+                        v-on:click="(_) => $emit('pause')"
+                        v-if="playing"
                     >
-                        <PauseIcon v-if="pause" :size="32" />
-                        <PlayIcon v-else="pause" :size="32" />
+                        <PauseIcon :size="32" />
+                    </button>
+                    <button
+                        class="p-1 rounded-primary bg-[hsl(240,4%,16%,0.6)] hover:bg-[hsl(240,4%,16%,0.8)] transition-all"
+                        v-on:click="(_) => $emit('play')"
+                        v-else
+                    >
+                        <PlayIcon :size="32" />
                     </button>
                 </div>
             </div>

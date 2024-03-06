@@ -4,6 +4,10 @@ import Option from './option.vue'
 import Section from './section.vue'
 import Queue from './upnext/queue.vue'
 import Playing from './upnext/playing.vue'
+import { usePlayerManager } from '@/modules/player'
+
+const playerManager = usePlayerManager()
+const player = playerManager.player
 
 import { ref, watch } from 'vue'
 const router = useRouter()
@@ -63,7 +67,7 @@ const onNextupMenu = () => {
             </template>
         </Section>
 
-        <div class="w-full absolute bottom-0 mt-auto">
+        <div class="w-full absolute bottom-0 mt-auto" v-if="player.getCursor().some">
             <Queue :open="open" />
             <Playing :onNextupMenu="onNextupMenu" :open="open" />
         </div>

@@ -1,8 +1,12 @@
 <script setup lang="ts">
 // import PageControls from './components/controls/index.vue'
-import PageControls from './components/controls/index.vue'
+import PageControls from './modules/player/components/controls/index.vue'
 import Sidebar from './components/sidebar/index.vue'
 import DragWrapper from './dragWrapper.vue'
+import { usePlayerManager } from '@/modules/player'
+
+const playerManager = usePlayerManager()
+const player = playerManager.player
 </script>
 
 <template>
@@ -13,7 +17,7 @@ import DragWrapper from './dragWrapper.vue'
                     <Sidebar />
                 </div>
                 <div class="w-full flex-shrink-1 relative">
-                    <div class="absolute bottom-0 w-full h-[65px]">
+                    <div class="absolute bottom-0 w-full h-[65px]" v-if="player.getCursor().some">
                         <PageControls />
                     </div>
                     <RouterView />

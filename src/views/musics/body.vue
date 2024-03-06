@@ -1,22 +1,34 @@
 <script setup lang="ts">
 import BodyTemplate from './templates/body.vue'
 import MusicItem from './components/musicItem.vue'
+import { onMounted, ref, watch } from 'vue'
+import { useContextRegistry } from '@/modules/contextRegistry'
+import { useMusicRegistry } from '@/modules/musicRegistry'
 
-import type { Music as MusicType } from '@/stores/api/index.ts'
-import { getMusics } from '@/stores/api/index.ts'
-import { onMounted, ref } from 'vue'
+const contextRegistry = useContextRegistry()
+const musicRegistry = useMusicRegistry()
 
-const musics = ref<Array<MusicType>>([])
+const libraryContext = contextRegistry.for('library')
 
-onMounted(async () => {
-    musics.value = await getMusics()
+const musics = ref<Array<string>>(Array.from(libraryContext.musics))
+
+watch([libraryContext], () => {
+    musics.value = Array.from(libraryContext.musics)
 })
-</script>
 
+onMounted(() => musicRegistry.sync())
+</script>
 <template>
     <BodyTemplate>
         <template #musics>
-            <MusicItem v-for="music in musics" :id="music.id" :name="music.name" />
+            <MusicItem
+                :music-id="music"
+                context-id="library"
+                :title="musicRegistry.get(music).unwrap().title"
+                :cover="musicRegistry.get(music).unwrap().cover"
+                :audio="musicRegistry.get(music).unwrap().audio"
+                v-for="music in musics"
+            />
         </template>
     </BodyTemplate>
 </template>
