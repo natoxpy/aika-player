@@ -1,8 +1,8 @@
 import { defineStore } from 'pinia'
 import { Err, None, Ok, Option, Result, Some } from 'ts-results'
-import { reactive, ref, watch, type Ref } from 'vue'
+import { reactive, ref, watch } from 'vue'
 import * as ContextRegistry from '../contextRegistry'
-import { useMusicRegistry, type MusicRecord } from '../musicRegistry'
+import { useMusicRegistry } from '../musicRegistry'
 import { useAudioProvider } from '../audio'
 
 export class Player {
@@ -54,6 +54,23 @@ export class Player {
         return this.musicList.has(musicId)
     }
 
+    public setCursorAtIndex(idx: number): Result<null, null> {
+        if (idx < 0 || idx > this.musicList.size - 1) return Err(null)
+
+        const music = Array.from(this.musicList)[idx]
+        if (music === undefined) return Err(null)
+
+        this.setCursor(music)
+
+        return Ok(null)
+    }
+
+    public getIndex(musicId: string): Option<number> {
+        let index = Array.from(this.musicList).findIndex((item) => item == musicId)
+        if (index == -1) return None
+        return Some(index)
+    }
+
     private setFrom(data: ContextRegistry.MusicContextList): Result<null, null> {
         if (data instanceof ContextRegistry.MusicContextList) {
             let cursor = data.musics.values().next().value as string | undefined
@@ -93,7 +110,15 @@ function onUpdateCursor(player: Player, cursor: string) {
 }
 
 function onMusicFinish(player: Player, cursor: string) {
-    console.log('play next')
+    const cursorIndex = player.getIndex(cursor)
+    if (cursorIndex.none) return
+
+    const nextMusic = player.setCursorAtIndex(cursorIndex.val + 1)
+    if (nextMusic.err) {
+        return
+    }
+
+    return console.log('playing next music')
 }
 
 export const usePlayerManager = defineStore('playerManager', () => {
@@ -112,15 +137,17 @@ export const usePlayerManager = defineStore('playerManager', () => {
         }
     })
 
-    watch([audioProvider], () => {
-        if (audioProvider.duration != audioProvider.currentTime) return
+    const endedEvent = () => {
+        if (Math.ceil(audioProvider.duration) != Math.ceil(audioProvider.currentTime)) return
 
         const cursor = player.getCursor()
 
         if (!(player instanceof Player && cursor.some && player.has(cursor.val))) return
 
         onMusicFinish(player, cursor.val)
-    })
+    }
+
+    audioProvider.audio.addEventListener('ended', endedEvent)
 
     const play = (musicId: string) => {
         return player.setCursor(musicId)

@@ -9,6 +9,10 @@ export const useAudioProvider = defineStore('audioProvider', () => {
     const duration = ref<number>(0)
     const volume = ref<number>(1)
 
+    audio.value.autoplay = false
+
+    audio.value.addEventListener('canplay', () => play())
+
     // const a = audio.value.canPlayType("application/vnd.apple.mpegurl");
     setInterval(() => {
         duration.value = audio.value.duration ?? 0
@@ -26,7 +30,6 @@ export const useAudioProvider = defineStore('audioProvider', () => {
     const setSrc = (source: string) => {
         src.value = source
         audio.value.src = source
-        play()
     }
 
     const setVolume = (v: number) => {
