@@ -24,6 +24,7 @@ const props = withDefaults(defineProps<Props>(), {
     cover: 'no image',
     audio: undefined
 })
+
 const active = ref(props.active && !audioProvider.paused ? true : props.active)
 const playing = ref(props.active && !audioProvider.paused ? true : false)
 
@@ -31,13 +32,6 @@ watch([audioProvider], () => {
     active.value = props.active && !audioProvider.paused ? true : props.active
     playing.value = props.active && !audioProvider.paused ? true : false
 })
-
-let audioManager = audioStore()
-
-function play() {
-    if (props.audio === undefined) console.log('this music does not have an audio file')
-    // audioManager.setSrc(props.audio)
-}
 
 defineEmits<{
     (e: 'play'): void
@@ -85,8 +79,17 @@ defineEmits<{
         <template #title>
             <slot name="title" />
         </template>
-        <template #author>
-            <slot name="author" />
+
+        <template #artist-list>
+            <slot name="artist-list" />
+        </template>
+
+        <template #artist-separator>
+            <slot name="artist-separator" />
+        </template>
+
+        <template #artist-featured-list>
+            <slot name="artist-featured-list" />
         </template>
     </MusicTemplate>
 </template>

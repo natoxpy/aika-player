@@ -22,11 +22,13 @@ onMounted(() => musicRegistry.sync())
     <BodyTemplate>
         <template #musics>
             <MusicItem
-                :music-id="music"
                 context-id="library"
+                :music-id="music"
                 :title="musicRegistry.get(music).unwrap().title"
                 :cover="musicRegistry.get(music).unwrap().cover"
                 :audio="musicRegistry.get(music).unwrap().audio"
+                :artists="Array.from(musicRegistry.get(music).unwrap().artists)"
+                :featured-artists="Array.from(musicRegistry.get(music).unwrap().featuredArtists)"
                 v-for="music in musics"
             />
         </template>

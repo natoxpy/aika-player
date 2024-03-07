@@ -1,13 +1,13 @@
 <script setup lang="ts">
 import { useAudioProvider } from '@/modules/audio'
-import Author from './artist.vue'
+import Artist from './artist.vue'
 import Music from './music.vue'
-import { useMusicRegistry } from '@/modules/musicRegistry'
 import { usePlayerManager } from '@/modules/player'
+import { useArtistRegistry } from '@/modules/artistRegistry'
 
 const audioProvider = useAudioProvider()
 const playerManager = usePlayerManager()
-const musicRegistry = useMusicRegistry()
+const artistRegistry = useArtistRegistry()
 const player = playerManager.player
 
 type Props = {
@@ -16,6 +16,8 @@ type Props = {
     title: string
     audio: string
     cover: string
+    artists: string[]
+    featuredArtists: string[]
 }
 
 const props = defineProps<Props>()
@@ -43,8 +45,24 @@ function pause() {
         :active="player.cursorEq(musicId)"
     >
         <template #title> {{ title }} </template>
-        <template #author>
-            <Author> Mili </Author>
+        <template #artist-list>
+            <span class="text-gray-600 italic" v-if="artists.length == 0">No artists</span>
+
+            <Artist v-for="artist in artists">
+                {{ artistRegistry.get(artist).unwrap().name }}
+            </Artist>
+        </template>
+
+        <template #artist-separator>
+            <div v-if="featuredArtists.length != 0" class="w-1 h-1 bg-gray-500 rounded-full" />
+        </template>
+
+        <template #artist-featured-list>
+            <span class="text-gray-600 italic" v-if="artists.length == 0">No artists</span>
+
+            <Artist v-for="artist in featuredArtists">
+                {{ artistRegistry.get(artist).unwrap().name }}
+            </Artist>
         </template>
     </Music>
 </template>

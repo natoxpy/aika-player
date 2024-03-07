@@ -1,5 +1,5 @@
 <template>
-  <div class="text-fsecondary">
-    <slot />
-  </div>
+    <div class="text-gray-500">
+        <slot />
+    </div>
 </template>

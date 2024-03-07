@@ -92,9 +92,15 @@ function onUpdateCursor(player: Player, cursor: string) {
     audioProvider.setSrc(music.val.audio)
 }
 
+function onMusicFinish(player: Player, cursor: string) {
+    console.log('play next')
+}
+
 export const usePlayerManager = defineStore('playerManager', () => {
     const cursorShadow = ref()
     const player = reactive(new Player(new Set(), None))
+
+    const audioProvider = useAudioProvider()
 
     watch([player], () => {
         if (cursorShadow.value == player.getCursor()) return
@@ -104,6 +110,16 @@ export const usePlayerManager = defineStore('playerManager', () => {
         if (player instanceof Player && cursor.some && player.has(cursor.val)) {
             onUpdateCursor(player, cursor.val)
         }
+    })
+
+    watch([audioProvider], () => {
+        if (audioProvider.duration != audioProvider.currentTime) return
+
+        const cursor = player.getCursor()
+
+        if (!(player instanceof Player && cursor.some && player.has(cursor.val))) return
+
+        onMusicFinish(player, cursor.val)
     })
 
     const play = (musicId: string) => {

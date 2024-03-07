@@ -3,6 +3,7 @@ import { None, Some } from 'ts-results'
 import { reactive } from 'vue'
 import { useContextRegistry } from './contextRegistry'
 import { getCover, getMusicAudio, getMusics, wrapFileId } from '@/api'
+import { useArtistRegistry } from './artistRegistry'
 
 /*INFO:
  * Music Registry Contains a list of all musics the client its
@@ -71,21 +72,28 @@ export const useMusicRegistry = defineStore('musicRegistry', () => {
     }
 
     const syncRecord = async () => {
+        const artistRegistry = useArtistRegistry()
+        artistRegistry.sync()
+
         for (const music of await getMusics()) {
             if (musicList.has(music.id)) continue
 
-            const audio = await getMusicAudio(music.id)
-            const cover = await getCover(music.id)
+            const audio = await music.getAudio()
+            const cover = await music.getCover()
+            const artists = await music.getArtists()
 
-            if (!audio) continue
-            const audioCDN = wrapFileId(audio.file_id)
+            if (audio.none || artists.none) continue
 
             addRecord(music.id, {
                 title: music.name,
-                audio: audioCDN,
+                audio: audio.val,
                 cover: cover,
-                featuredArtists: new Set(),
-                artists: new Set(),
+                featuredArtists: new Set(
+                    artists.val.filter((item) => item.featured).map((item) => item.id)
+                ),
+                artists: new Set(
+                    artists.val.filter((item) => !item.featured).map((item) => item.id)
+                ),
                 albums: new Set()
             })
         }

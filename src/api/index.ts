@@ -1,3 +1,6 @@
+import axios from 'axios'
+import { type ArtistWithFeaturedResponse } from './crud/artists.ts'
+import { None, Option, Some } from 'ts-results'
 export { getImage, createImage } from './crud/images.ts'
 export { getAudio, createAudio } from './crud/audios.ts'
 export { getArtists, createArtist } from './crud/artists.ts'
@@ -7,7 +10,7 @@ export { soundcloudImport } from './import/soundcloud.ts'
 
 export const API_LOCATION = 'http://[::1]:8000'
 
-export type Music = {
+export type MusicResponse = {
     name: string
     id: string
 }
@@ -27,12 +30,53 @@ export type MusicArtist = {
     featured: boolean
 }
 
+export class Music {
+    constructor(
+        public name: string,
+        public id: string
+    ) {}
+
+    public async getCover(): Promise<string> {
+        const res = await axios.get<{ file_id: string }>(
+            `${API_LOCATION}/db/musics/${this.id}/cover`
+        )
+
+        if (res.status === 200) {
+            return wrapFileId(res.data.file_id)
+        }
+
+        return DEFAULT_IMAGE_FILE
+    }
+
+    public async getAudio(): Promise<Option<string>> {
+        const res = await axios.get<{ file_id: string }>(
+            `${API_LOCATION}/db/musics/${this.id}/audio`
+        )
+
+        if (res.status === 200) return Some(wrapFileId(res.data.file_id))
+
+        return None
+    }
+
+    public async getArtists(): Promise<Option<Array<ArtistWithFeaturedResponse>>> {
+        const res = await axios.get<Array<ArtistWithFeaturedResponse>>(
+            `${API_LOCATION}/db/musics/${this.id}/artists`
+        )
+
+        if (res.status == 200) return Some(res.data)
+
+        return None
+    }
+
+    public async getAlbums() {}
+}
+
 /**
  * Returns all musics
  */
 export async function getMusics() {
-    const res = await fetch(`${API_LOCATION}/db/musics/`)
-    return (await res.json()) as Array<Music>
+    const res = await axios.get<Array<MusicResponse>>(`${API_LOCATION}/db/musics/`)
+    return res.data.map((music) => new Music(music.name, music.id))
 }
 
 export async function getMusicAudio(musicId: string) {
