@@ -1,8 +1,7 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
-import { audioStore } from '@/stores/audio'
-
-let audioManager = audioStore()
+import { useAudioProvider } from '@/modules/audio'
+let audioProvider = useAudioProvider()
 
 let item = ref<HTMLDivElement>()
 let prog = ref(1.0)
@@ -12,10 +11,10 @@ onMounted(() => {
     let sitem = item.value
     if (!sitem) return
 
-    prog.value = audioManager.volume
+    prog.value = audioProvider.volume
 
     const update_audio = () => {
-        audioManager.setVolume(prog.value)
+        audioProvider.setVolume(prog.value)
         mouse_down.value = false
     }
 
@@ -26,7 +25,7 @@ onMounted(() => {
 
         ax = Math.max(Math.min(ax, 1), 0)
         if (!mouse_down.value) return
-        audioManager.setVolume(ax)
+        audioProvider.setVolume(ax)
         prog.value = ax
     }
 
