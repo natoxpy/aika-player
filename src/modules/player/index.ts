@@ -5,12 +5,38 @@ import * as ContextRegistry from '../contextRegistry'
 import { useMusicRegistry } from '../musicRegistry'
 import { useAudioProvider } from '../audio'
 
+export type RepeatModes = 'not-repeat' | 'repeat-single' | 'repeat-context'
+
 export class Player {
+    private repeatMode: RepeatModes = 'not-repeat'
+
     constructor(
         private musicList: Set<string>,
         private cursor: Option<string>,
         private contextId: Option<string> = None
     ) {}
+
+    public setRepeatMode(repeatMode: RepeatModes) {
+        this.repeatMode = repeatMode
+    }
+
+    public getRepeatMode() {
+        return this.repeatMode
+    }
+
+    public nextRepeatMode() {
+        switch (this.repeatMode) {
+            case 'not-repeat':
+                this.setRepeatMode('repeat-single')
+                break
+            case 'repeat-single':
+                this.setRepeatMode('repeat-context')
+                break
+            case 'repeat-context':
+                this.setRepeatMode('not-repeat')
+                break
+        }
+    }
 
     public getMusicList() {
         return this.musicList
@@ -45,7 +71,7 @@ export class Player {
 
         if (musicContext.none) return Err(null)
 
-        this.setFrom(musicContext.val)
+        this.setFrom(musicContext.val as ContextRegistry.MusicContextList)
 
         return Ok(null)
     }
@@ -113,12 +139,19 @@ function onMusicFinish(player: Player, cursor: string) {
     const cursorIndex = player.getIndex(cursor)
     if (cursorIndex.none) return
 
-    const nextMusic = player.setCursorAtIndex(cursorIndex.val + 1)
+    let nextMusicIndex = cursorIndex.val
+
+    if (player.getRepeatMode() == 'repeat-context' || player.getRepeatMode() == 'not-repeat') {
+        nextMusicIndex++
+    }
+
+    const nextMusic = player.setCursorAtIndex(nextMusicIndex)
+
     if (nextMusic.err) {
         return
     }
 
-    return console.log('playing next music')
+    return
 }
 
 export const usePlayerManager = defineStore('playerManager', () => {

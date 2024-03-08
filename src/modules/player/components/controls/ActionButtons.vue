@@ -6,13 +6,12 @@ import NextButton from '@/components/icons/NextBtn.vue'
 import RepeatIcon from '@/components/icons/RepeatIcon.vue'
 import RepeatAllIcon from '@/components/icons/RepeatAllIcon.vue'
 import RepeatOneIcon from '@/components/icons/RepeatOneIcon.vue'
-import { onMounted } from 'vue'
 import { useAudioProvider } from '@/modules/audio'
-// import { audioStore } from '../../stores/audio'
+import { usePlayerManager } from '@/modules/player'
 
-// let audioManager = audioStore()
-
-let audioProvider = useAudioProvider()
+const audioProvider = useAudioProvider()
+const playerManager = usePlayerManager()
+const player = playerManager.player
 
 function pause() {
     audioProvider.pause()
@@ -20,6 +19,10 @@ function pause() {
 
 function play() {
     audioProvider.play()
+}
+
+function repeatToggle() {
+    player.nextRepeatMode()
 }
 </script>
 <template>
@@ -37,8 +40,16 @@ function play() {
         <button class="p-2">
             <NextButton :size="20" />
         </button>
-        <button class="p-2">
-            <RepeatIcon :size="22" />
+        <button @click="repeatToggle" class="p-2 stroke-0 fill-fprimary stroke-fprimary">
+            <span v-if="player.getRepeatMode() === 'not-repeat'">
+                <RepeatIcon color="defaultColor" :size="22" />
+            </span>
+            <span v-if="player.getRepeatMode() === 'repeat-single'">
+                <RepeatOneIcon color="defaultColor" :size="22" :stroke-width="0" />
+            </span>
+            <span v-if="player.getRepeatMode() === 'repeat-context'">
+                <RepeatAllIcon color="defaultColor" :size="22" />
+            </span>
         </button>
     </div>
 </template>

@@ -23,19 +23,19 @@ export const useArtistRegistry = defineStore('artistRegistry', () => {
         return true
     }
 
-    const getRecord = (musicId: string) => {
-        let record = artistList.get(musicId)
+    const getRecord = (artistId: string) => {
+        let record = artistList.get(artistId)
         if (record) return Some(record)
         return None
     }
 
-    const deleteRecord = (musicId: string) => {
-        return artistList.delete(musicId)
+    const deleteRecord = (artistId: string) => {
+        return artistList.delete(artistId)
     }
 
-    const updateRecord = (musicId: string, record: ArtistRecord) => {
-        if (!artistList.has(musicId)) return false
-        artistList.set(musicId, record)
+    const updateRecord = (artistId: string, record: ArtistRecord) => {
+        if (!artistList.has(artistId)) return false
+        artistList.set(artistId, record)
         return true
     }
 
