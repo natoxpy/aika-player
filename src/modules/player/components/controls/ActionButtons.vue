@@ -21,13 +21,21 @@ function play() {
     audioProvider.play()
 }
 
+function next() {
+    player.cursorNext()
+}
+
+function previous() {
+    player.cursorPrevious()
+}
+
 function repeatToggle() {
     player.nextRepeatMode()
 }
 </script>
 <template>
     <div class="w-full ml-4 max-w-44 h-full flex items-center justify-center gap-1">
-        <button class="p-2">
+        <button class="p-2" @click="previous">
             <PreviousButton :size="20" />
         </button>
         <button class="p-2" v-if="audioProvider.paused" @click="play">
@@ -37,7 +45,7 @@ function repeatToggle() {
             <PauseButton :size="20" />
         </button>
 
-        <button class="p-2">
+        <button class="p-2" @click="next">
             <NextButton :size="20" />
         </button>
         <button @click="repeatToggle" class="p-2 stroke-0 fill-fprimary stroke-fprimary">

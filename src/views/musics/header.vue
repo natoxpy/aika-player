@@ -48,7 +48,7 @@ watch([filterContent], () => {
 
     const fuse = new Fuse(Array.from(musics), {
         shouldSort: false,
-        threshold: 0.5,
+        threshold: 0.4,
         keys: ['title', 'artists', 'featuredArtists']
     })
 

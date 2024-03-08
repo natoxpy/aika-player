@@ -24,6 +24,21 @@ export class Player {
         return this.repeatMode
     }
 
+    public cursorNext(): Result<null, null> {
+        if (this.cursor.none) return Err(null)
+        const cursorIndex = this.getIndex(this.cursor.val)
+        if (cursorIndex.none) return Err(null)
+
+        return this.setCursorAtIndex(cursorIndex.val + 1)
+    }
+    public cursorPrevious(): Result<null, null> {
+        if (this.cursor.none) return Err(null)
+        const cursorIndex = this.getIndex(this.cursor.val)
+        if (cursorIndex.none) return Err(null)
+
+        return this.setCursorAtIndex(cursorIndex.val - 1)
+    }
+
     public nextRepeatMode() {
         switch (this.repeatMode) {
             case 'not-repeat':
