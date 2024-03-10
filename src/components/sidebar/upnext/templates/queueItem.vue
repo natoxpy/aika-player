@@ -45,9 +45,9 @@ function pause() {
 </script>
 <template>
     <div
-        class="w-full flex py-2 pr-2 gap-1 relative rounded-primary hover:bg-bextra group transition-all group/a"
+        class="w-full flex py-2 pr-2 gap-1 relative rounded-primary hover:bg-base group transition-all group/a"
         :class="{
-            'min-hl-[132px] h-92 border-l bg-bextra': has_over,
+            'min-hl-[132px] h-92 border-l bg-base': has_over,
             'min-h-[66px]': !has_over
         }"
         v-bind="$attrs"
@@ -55,7 +55,7 @@ function pause() {
         <div
             class="w-[12px] ml-1 flex flex-col justify-center opacity-0 group-hover:opacity-100 items-center"
         >
-            <span class="hover:stroke-fprimary stroke-fsecondary cursor-move transition-all">
+            <span class="cursor-move transition-all stroke-overlay1 hover:stroke-lavender">
                 <GridVerticalIcon :size="24" color="defaultColor" />
             </span>
         </div>
@@ -64,35 +64,31 @@ function pause() {
             :style="{ backgroundImage: `url(${cover})` }"
         >
             <div
-                class="h-[50px] w-[50px] flex justify-center items-center transition-all cursor-pointer opacity-0 group-hover/a:bg-[hsl(0,0%,0%,0.3)] group-hover/a:opacity-100"
+                class="h-[50px] w-[50px] flex justify-center items-center transition-all cursor-pointer opacity-0 group-hover/a:bg-[hsl(0,0%,0%,0.3)] group-hover/a:opacity-100 stroke-overlay1 hover:stroke-lavender"
                 :class="{
                     'opacity-100 bg-[hsl(0,0%,0%,0.3)]': active
                 }"
             >
                 <button
-                    class="stroke-fprimary w-full h-full flex items-center justify-center"
+                    class="w-full h-full flex items-center justify-center"
                     v-if="playing"
                     @click="pause"
                 >
                     <PauseIcon :size="24" :strokeWidth="3" color="defaultColor" />
                 </button>
 
-                <button
-                    class="stroke-fprimary w-full h-full flex items-center justify-center"
-                    v-else
-                    @click="play"
-                >
+                <button class="w-full h-full flex items-center justify-center" v-else @click="play">
                     <PlayIcon :size="24" :strokeWidth="3" color="defaultColor" />
                 </button>
             </div>
         </div>
         <div class="grow">
             <div
-                class="w-[165px] group-hover:w-[190px] text-fprimary overflow-hidden text-ellipsis whitespace-nowrap transition-all"
+                class="w-[165px] group-hover:w-[190px] text-text overflow-hidden text-ellipsis whitespace-nowrap transition-all"
             >
                 <slot name="title" />
             </div>
-            <div class="text-sm flex gap-1 text-fsecondary">
+            <div class="text-sm flex gap-1 text-overlay0">
                 <div>Mili</div>
                 <span>-</span>
                 <div>Album</div>
@@ -100,11 +96,11 @@ function pause() {
         </div>
         <div class="w-[40px] flex justify-start items-center">
             <span class="hidden group-hover:flex justify-end w-full">
-                <span class="hover:stroke-fprimary stroke-fsecondary transition-all cursor-pointer">
+                <span class="hover:stroke-lavender stroke-overlay1 transition-all cursor-pointer">
                     <MoreVerticalIcon :size="24" color="defaultColor" />
                 </span>
             </span>
-            <span class="text-fprimary group-hover:hidden">1:30</span>
+            <span class="text-text group-hover:hidden">1:30</span>
         </div>
     </div>
 

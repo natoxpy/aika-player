@@ -40,10 +40,10 @@ function addMusic() {
         <template #save>
             <button
                 @click="save"
-                class="border border-baccent stroke-baccent h-[34px] min-w-[38px] w-[38px] flex items-center justify-center rounded-primary transition-all"
+                class="border border-surface1 stroke-overlay1 h-[34px] min-w-[38px] w-[38px] flex items-center justify-center rounded-primary transition-all"
                 :disabled="importMusic.onGoing"
                 :class="{
-                    'hover:stroke-fprimary': !importMusic.onGoing,
+                    'active:stroke-lavender active:border-lavender': !importMusic.onGoing,
                     'opacity-30 cursor-auto': importMusic.onGoing
                 }"
             >
@@ -54,7 +54,7 @@ function addMusic() {
         <template #input>
             <input
                 ref="musicUrlInput"
-                class="outline-none bg-transparent border-baccent border px-3 py-1 w-full rounded-primary transition-all placeholder:text-baccent"
+                class="outline-none bg-transparent border-surface1 focus:border-lavender border px-3 py-1 w-full rounded-primary transition-all placeholder:text-overlay1 placeholder:text-overlay1 text-text"
                 placeholder="Music URL"
                 :class="{
                     'opacity-30': importMusic.onGoing
@@ -64,9 +64,9 @@ function addMusic() {
         </template>
         <template #submit-btn>
             <button
-                class="border-baccent border rounded-primary py-1 px-3"
+                class="border-surface1 text-overlay1 border rounded-primary py-1 px-3"
                 :class="{
-                    'active:border-fsecondary active:bg-bextra': !importMusic.onGoing,
+                    'active:border-lavender active:text-lavender': !importMusic.onGoing,
                     'opacity-30 cursor-auto': importMusic.onGoing
                 }"
                 :disabled="importMusic.onGoing"

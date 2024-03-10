@@ -65,7 +65,7 @@ watch([filterContent], () => {
         <template #filter>
             <input
                 v-model="filterContent"
-                class="outline-none bg-transparent border-baccent border px-3 py-1 w-[300px] rounded-primary transition-all placeholder:text-baccent"
+                class="outline-none bg-transparent border-surface1 focus:border-lavender border px-3 py-1 w-[300px] rounded-primary transition-all placeholder:text-overlay1"
                 placeholder="Filter"
             />
         </template>

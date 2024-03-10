@@ -9,9 +9,9 @@ const player = playerManager.player
 </script>
 
 <template>
-    <DragWrapper>
+    <DragWrapper class="macchiato">
         <template #app>
-            <div class="flex flex-row w-screen h-screen bg-bprimary">
+            <div class="flex flex-row w-screen h-screen bg-base">
                 <div class="min-w-[330px]">
                     <Sidebar />
                 </div>

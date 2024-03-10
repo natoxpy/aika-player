@@ -27,18 +27,18 @@ const props = defineProps<Props>()
 
 function ResolveIcon({ icon }: { icon: OptionIcons }) {
     let IconVue = icons[icon]
-    return <IconVue size={24} color="#3A3A43" />
+    return <IconVue size={24} color="defaultColor" />
 }
 </script>
 
 <template>
     <RouterLink
         :to="props.href"
-        class="cursor-pointer flex gap-4 py-3 px-4 rounded-primary transition"
-        :class="{ 'bg-baccent': props.active, 'hover:bg-bextra': !props.active }"
+        class="cursor-pointer flex gap-4 py-3 px-4 rounded-primary transition stroke-lavender"
+        :class="{ 'bg-base': props.active, 'hover:bg-mantle': !props.active }"
     >
         <ResolveIcon :icon="props.icon" />
-        <span class="text-fprimary font-semibold text-base">
+        <span class="text-subtext1 font-semibold text-base">
             <slot />
         </span>
     </RouterLink>

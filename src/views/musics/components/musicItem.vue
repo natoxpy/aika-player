@@ -46,7 +46,7 @@ function pause() {
     >
         <template #title> {{ title }} </template>
         <template #artist-list>
-            <span class="text-gray-600 italic" v-if="artists.length == 0">No artists</span>
+            <span class="text-subtext1 italic" v-if="artists.length == 0">No artists</span>
 
             <Artist v-for="artist in artists">
                 {{ artistRegistry.get(artist).unwrap().name }}
@@ -58,7 +58,7 @@ function pause() {
         </template>
 
         <template #artist-featured-list>
-            <span class="text-gray-600 italic" v-if="artists.length == 0">No artists</span>
+            <span class="text-subtext1 italic" v-if="artists.length == 0">No artists</span>
 
             <Artist v-for="artist in featuredArtists">
                 {{ artistRegistry.get(artist).unwrap().name }}

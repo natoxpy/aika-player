@@ -34,21 +34,23 @@ function repeatToggle() {
 }
 </script>
 <template>
-    <div class="w-full ml-4 max-w-44 h-full flex items-center justify-center gap-1">
+    <div
+        class="w-full ml-4 max-w-44 h-full flex items-center justify-center gap-1 fill-lavender stroke-lavender"
+    >
         <button class="p-2" @click="previous">
-            <PreviousButton :size="20" />
+            <PreviousButton :size="20" color="defaultColor" />
         </button>
         <button class="p-2" v-if="audioProvider.paused" @click="play">
-            <PlayButton :size="20" />
+            <PlayButton :size="20" color="defaultColor" />
         </button>
         <button class="p-2" v-else @click="pause">
-            <PauseButton :size="20" />
+            <PauseButton :size="20" color="defaultColor" />
         </button>
 
         <button class="p-2" @click="next">
-            <NextButton :size="20" />
+            <NextButton :size="20" color="defaultColor" />
         </button>
-        <button @click="repeatToggle" class="p-2 stroke-0 fill-fprimary stroke-fprimary">
+        <button @click="repeatToggle" class="p-2 stroke-0">
             <span v-if="player.getRepeatMode() === 'not-repeat'">
                 <RepeatIcon color="defaultColor" :size="22" />
             </span>

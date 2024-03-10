@@ -23,19 +23,18 @@ function toggleSelect() {
 </script>
 <template>
     <div
-        class="flex items-center border-b border-baccent pr-3 h-11 hover:bg-bextra cursor-pointer"
+        class="flex items-center hover:bg-crust hover:bg-opacity-70 pr-3 h-11 cursor-pointer"
         @click="toggleSelect"
     >
-        <div class="min-w-8 h-8 flex justify-center items-center stroke-fsecondary">
+        <div class="min-w-8 h-8 flex justify-center items-center stroke-lavender">
             <span v-if="selected">
                 <CheckIcon :size="20" color="defaultColor" />
             </span>
         </div>
+
         <div class="mr-2 h-7 w-7">
-            <img class="aspect-square rounded-full" :src="cover" />
+            <img class="h-7 min-w-7 aspect-square rounded-full" :src="cover" />
         </div>
-        <span class="text-fprimary whitespace-nowrap overflow-hidden text-ellipsis">{{
-            name
-        }}</span>
+        <span class="text-text whitespace-nowrap overflow-hidden text-ellipsis">{{ name }}</span>
     </div>
 </template>

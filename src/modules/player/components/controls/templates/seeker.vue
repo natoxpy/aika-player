@@ -86,17 +86,17 @@ onUnmounted(() => {
 </script>
 <template>
     <div
-        class="w-full bg-baccent h-1 rounded-md flex relative items-center group select-none"
+        class="w-full bg-surface1 h-1 rounded-md flex relative items-center group select-none"
         @mousedown="mousedown"
         ref="progressElement"
     >
         <div class="flex relative cursor-pointer items-center w-full h-16" ref="item">
             <div
-                class="h-1 bg-fsecondary rounded-md relative"
+                class="h-1 bg-overlay1 rounded-md relative"
                 :style="{ width: `${displayProgress * 100}%` }"
             >
                 <div
-                    class="h-1 w-1 scale-[2.5] opacity-0 group-hover:opacity-100 bg-fsecondary rounded-full absolute -right-[.25rem] transition-all -translate-x-1"
+                    class="h-1 w-1 scale-[2.5] opacity-0 group-hover:opacity-100 bg-overlay1 rounded-full absolute -right-[.25rem] transition-all -translate-x-1"
                     :style="{
                         opacity: !isMouseDown ? (null as any) : 1
                     }"

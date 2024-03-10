@@ -25,7 +25,7 @@ const onNextupMenu = () => {
 </script>
 
 <template>
-    <div class="h-full border-baccent border-r flex flex-col relative overflow-y-auto">
+    <div class="h-full border-surface0 bg-mantle flex flex-col relative overflow-y-auto">
         <Section>
             <template #title>Discover</template>
             <template #options>

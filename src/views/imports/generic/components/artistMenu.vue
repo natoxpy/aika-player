@@ -64,14 +64,14 @@ onMounted(() => {
     <div
         ref="wrapperElement"
         id="idForFocus"
-        class="flex flex-col absolute bg-bprimary border border-baccent left-0 top-0 z-50 w-60 text-white rounded-primary"
+        class="flex flex-col absolute bg-mantle left-0 top-0 z-50 w-60 rounded-primary"
         :class="{ hidden: opened != true }"
     >
-        <div class="flex gap-1 items-center border-b border-baccent">
+        <div class="flex gap-1 items-center border-b border-surface0">
             <input
                 v-model="artistSearchQuery"
                 type="text"
-                class="w-full pl-4 py-2 bg-transparent outline-none"
+                class="w-full pl-4 py-2 bg-transparent outline-none placeholder:text-overlay1 text-text"
                 placeholder="Artist name"
             />
             <div class="mr-1">
@@ -80,7 +80,7 @@ onMounted(() => {
         </div>
         <div class="flex flex-col">
             <div class="flex justify-center items-center" v-if="artists.length == 0">
-                <span class="text-fsecondary italic">No artists</span>
+                <span class="text-subtext1 italic">No artists</span>
             </div>
             <ArtistItem
                 :id="artist.id"
@@ -99,10 +99,10 @@ onMounted(() => {
                         (artistSearchQuery ?? '').trim() !== ''
                     )
                 }"
-                class="flex justify-center p-2 hover:bg-bextra"
+                class="flex gap-1 stroke-lavender justify-center p-2 hover:bg-surface0"
                 role="button"
             >
-                <PlusIcon :size="24" />
+                <PlusIcon :size="24" color="defaultColor" />
                 <span>Add {{ artistSearchQuery }}</span>
             </div>
         </div>

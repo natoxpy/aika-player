@@ -47,37 +47,40 @@ defineEmits<{
             />
         </template>
         <template #over-cover>
+            <!-- 234, 82, 84 -->
             <div
-                class="p-4 flex flex-col justify-between w-full h-full opacity-0 hover:opacity-100 hover:bg-[hsla(0,0%,30%,0.3)] transition-all"
-                :class="{ 'opacity-100 bg-[hsla(0,0%,30%,0.3)]': active }"
+                class="p-4 flex flex-col justify-between w-full h-full opacity-0 hover:opacity-100 bg-opacity-40 bg-base transition-all stroke-text"
+                :class="{ 'opacity-100': active }"
             >
                 <div class="flex justify-end">
                     <button
-                        class="px-1 py-0 rounded-primary bg-[hsl(240,4%,16%,0.6)] hover:bg-[hsl(240,4%,16%,0.8)] transition-all"
+                        class="px-1 py-0 rounded-primary bg-surface0 bg-opacity-70 hover:bg-opacity-80 hover:bg-surface1 transition-all hover:stroke-lavender"
                     >
-                        <MoreHorizontalIcon :size="32" />
+                        <MoreHorizontalIcon :size="32" color="defaultColor" />
                     </button>
                 </div>
                 <div>
                     <button
-                        class="p-1 rounded-primary bg-[hsl(240,4%,16%,0.6)] hover:bg-[hsl(240,4%,16%,0.8)] transition-all"
+                        class="p-1 rounded-primary bg-surface0 bg-opacity-70 hover:bg-opacity-80 hover:bg-surface1 transition-all hover:stroke-lavender"
                         v-on:click="(_) => $emit('pause')"
                         v-if="playing"
                     >
-                        <PauseIcon :size="32" />
+                        <PauseIcon :size="32" color="defaultColor" />
                     </button>
                     <button
-                        class="p-1 rounded-primary bg-[hsl(240,4%,16%,0.6)] hover:bg-[hsl(240,4%,16%,0.8)] transition-all"
+                        class="p-1 rounded-primary bg-surface0 bg-opacity-70 hover:bg-opacity-80 hover:bg-surface1 transition-all hover:stroke-lavender"
                         v-on:click="(_) => $emit('play')"
                         v-else
                     >
-                        <PlayIcon :size="32" />
+                        <PlayIcon :size="32" color="defaultColor" />
                     </button>
                 </div>
             </div>
         </template>
         <template #title>
-            <slot name="title" />
+            <span class="text-text">
+                <slot name="title" />
+            </span>
         </template>
 
         <template #artist-list>
