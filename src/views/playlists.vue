@@ -1,3 +1,3 @@
 <template>
-  <div class="bg-bprimary text-fprimary h-full">Playlists</div>
+    <div class="bg-base text-fprimary h-full">Playlist WIP</div>
 </template>
