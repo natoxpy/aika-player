@@ -1,5 +1,5 @@
 <script setup lang="ts">
-type Props = { stroke: string; size: string }
+type Props = { stroke: string; size?: string }
 defineProps<Props>()
 </script>
 <template>

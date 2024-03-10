@@ -15,11 +15,14 @@ defineProps<Props>()
         class="flex bg-mantle border-t-surface0 border-t gap-3 justify-center px-3 py-2 w-full h-[65px] sticky bottom-0"
     >
         <div
-            class="rounded-primary flex justify-end items-center h-[50px] w-full max-w-[53px] overflow-hidden"
+            class="rounded-primary flex justify-end items-center h-[50px] w-full max-w-[50px] overflow-hidden"
         >
-            <img width="50px" :src="cover" />
+            <div
+                class="w-[50px] h-[50px] bg-center bg-cover"
+                :style="{ backgroundImage: `url(${cover})` }"
+            ></div>
         </div>
-        <div class="w-full h-full flex flex-col justify-center">
+        <div class="min-w-[200px] h-full flex flex-col justify-center">
             <div class="text-text whitespace-nowrap overflow-hidden text-ellipsis">
                 <slot name="title" />
             </div>

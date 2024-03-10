@@ -54,10 +54,10 @@ function repeatToggle() {
             <span v-if="player.getRepeatMode() === 'not-repeat'">
                 <RepeatIcon color="defaultColor" :size="22" />
             </span>
-            <span v-if="player.getRepeatMode() === 'repeat-single'">
+            <span class="stroke-sky fill-sky" v-if="player.getRepeatMode() === 'repeat-single'">
                 <RepeatOneIcon color="defaultColor" :size="22" :stroke-width="0" />
             </span>
-            <span v-if="player.getRepeatMode() === 'repeat-context'">
+            <span class="stroke-sky fill-sky" v-if="player.getRepeatMode() === 'repeat-context'">
                 <RepeatAllIcon color="defaultColor" :size="22" />
             </span>
         </button>
