@@ -25,7 +25,7 @@ defineEmits<{
         @dragenter="(e) => $emit('dragenter', e)"
         @dragleave="(e) => $emit('dragleave', e)"
     >
-        <label class="w-full h-full bg-green-400" for="cover_input">
+        <label class="w-full h-full bg-green" for="cover_input">
             <div
                 class="flex w-full h-full p-2 bg-[hsla(225,10%,5%,0.6)] hover:opacity-100 opacity-0 transition-all cursor-pointer"
                 :class="{
@@ -35,24 +35,24 @@ defineEmits<{
                 }"
             >
                 <div
-                    class="flex flex-col grow rounded-primary border-dashed border-[hsla(225,10%,60%,0.9)] border-[3px] items-center justify-center transition-all"
+                    class="flex flex-col grow rounded-primary border-dashed border-[3px] items-center justify-center transition-all"
                     :class="{
-                        'stroke-[hsla(225,10%,75%,1)]': state === undefined,
-                        'border-emerald-500 stroke-emerald-500': state === 'draggingover',
-                        'border-red-400 stroke-red-400': state === 'invalid-cooldown'
+                        'border-lavender stroke-lavender': state === undefined,
+                        'border-teal stroke-teal': state === 'draggingover',
+                        'border-red stroke-red': state === 'invalid-cooldown'
                     }"
                 >
-                    <span class="text-gray-200 transition-all">
+                    <span class="text-subtext1 transition-all text-sm text-lavender">
                         <span
                             v-if="state == 'invalid-cooldown'"
-                            class="font-bold text-red-400 uppercase"
+                            class="font-bold text-red uppercase"
                             >Don't</span
                         >
-                        <span class="font-bold text-gray-100 transition-all">
+                        <span class="font-bold text-lavender transition-all">
                             Drag and
                             <span
                                 :class="{
-                                    'text-emerald-500 uppercase':
+                                    'text-teal uppercase':
                                         state === 'draggingover' || appDragOver.isOver
                                 }"
                             >

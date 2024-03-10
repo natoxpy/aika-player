@@ -44,7 +44,7 @@ onMounted(() => {
 })
 
 function blur(element: HTMLDivElement) {
-    element.style.borderBottom = ''
+    element.style.borderBottomWidth = '0px'
     element.style.whiteSpace = 'nowrap'
 
     if (element.innerText.trim() == '') {
@@ -59,7 +59,7 @@ function blur(element: HTMLDivElement) {
 }
 
 function focus(element: HTMLDivElement) {
-    element.style.borderBottom = '1px solid hsl(0, 0%, 50%, 0.5)'
+    element.style.borderBottomWidth = '1px'
     element.style.whiteSpace = 'normal'
 }
 
@@ -83,7 +83,7 @@ function getState() {
         <template #title>
             <div class="text-lg line-clamp-2 min-h-[28px] overflow-hidden text-ellipsis">
                 <div
-                    class="select-text border-baccent outline-none max-h-[56px] transition-all text-ellipsis overflow-hidden whitespace-nowrap"
+                    class="text-text select-text border-surface1 outline-none max-h-[56px] transition-all text-ellipsis overflow-hidden whitespace-nowrap"
                     contenteditable="true"
                     ref="titleSpan"
                     :spellcheck="false"
@@ -104,12 +104,12 @@ function getState() {
 
         <template #artist-list>
             <span
-                class="text-gray-600 italic"
+                class="text-surface2 italic"
                 v-if="artists.filter((item) => item.featured == false).length === 0"
                 >No artists</span
             >
             <span
-                class="text-gray-500"
+                class="text-overlay1 overflow-hidden text-ellipsis whitespace-nowrap"
                 v-for="artist of artists.filter((item) => item.featured == false)"
                 >{{ artist.username }}</span
             >
@@ -117,14 +117,14 @@ function getState() {
 
         <template #artist-separator>
             <div
-                class="w-1 h-1 bg-gray-500 rounded-full"
+                class="w-1 h-1 bg-lavender rounded-full"
                 v-if="artists.filter((item) => item.featured == true).length !== 0"
             />
         </template>
 
         <template #artist-featured-list>
             <span
-                class="text-gray-500"
+                class="text-overlay1 overflow-hidden text-ellipsis whitespace-nowrap"
                 v-for="artist of artists.filter((item) => item.featured == true)"
                 >{{ artist.username }}</span
             >
@@ -139,8 +139,12 @@ function getState() {
         </template>
 
         <template #album-list>
-            <span class="text-gray-600 italic" v-if="albums.length == 0">No albums</span>
-            <span class="text-gray-500" v-for="album of albums">{{ album.name }}</span>
+            <span class="text-surface2 italic" v-if="albums.length == 0">No albums</span>
+            <span
+                class="text-overlay1 overflow-hidden text-ellipsis whitespace-nowrap"
+                v-for="album of albums"
+                >{{ album.name }}</span
+            >
         </template>
 
         <template #album-menu>

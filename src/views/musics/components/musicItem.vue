@@ -1,30 +1,68 @@
 <script setup lang="ts">
-import Author from './artist.vue'
+import { useAudioProvider } from '@/modules/audio'
+import Artist from './artist.vue'
 import Music from './music.vue'
-import { ref, onMounted } from 'vue'
-import { getCover, getAudio, getMusicAudio } from '@/stores/api/index.ts'
+import { usePlayerManager } from '@/modules/player'
+import { useArtistRegistry } from '@/modules/artistRegistry'
+
+const audioProvider = useAudioProvider()
+const playerManager = usePlayerManager()
+const artistRegistry = useArtistRegistry()
+const player = playerManager.player
 
 type Props = {
-    id: string
-    name: string
+    musicId: string
+    contextId: string
+    title: string
+    audio: string
+    cover: string
+    artists: string[]
+    featuredArtists: string[]
 }
 
 const props = defineProps<Props>()
 
-const cover = ref()
-const audio = ref()
+function play() {
+    const cursor = player.getCursor()
+    if (cursor.some && cursor.val == props.musicId) {
+        audioProvider.play()
+    } else {
+        playerManager.playFromContext(props.musicId, props.contextId)
+    }
+}
 
-onMounted(async () => {
-    cover.value = await getCover(props.id)
-    audio.value = (await getMusicAudio(props.id))?.file_id
-})
+function pause() {
+    audioProvider.pause()
+}
 </script>
 
 <template>
-    <Music :cover="cover" :audio="audio">
-        <template #title> {{ name }} </template>
-        <template #author>
-            <Author> Mili </Author>
+    <Music
+        :cover="cover"
+        :audio="audio"
+        @play="play"
+        @pause="pause"
+        :active="player.cursorEq(musicId)"
+    >
+        <template #title> {{ title }} </template>
+        <template #artist-list>
+            <span class="text-subtext1 italic" v-if="artists.length == 0">No artists</span>
+
+            <Artist v-for="artist in artists">
+                {{ artistRegistry.get(artist).unwrap().name }}
+            </Artist>
+        </template>
+
+        <template #artist-separator>
+            <div v-if="featuredArtists.length != 0" class="w-1 h-1 bg-gray-500 rounded-full" />
+        </template>
+
+        <template #artist-featured-list>
+            <span class="text-subtext1 italic" v-if="artists.length == 0">No artists</span>
+
+            <Artist v-for="artist in featuredArtists">
+                {{ artistRegistry.get(artist).unwrap().name }}
+            </Artist>
         </template>
     </Music>
 </template>

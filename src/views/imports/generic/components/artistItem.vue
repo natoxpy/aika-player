@@ -29,32 +29,15 @@ function toggleArtistType(e: MouseEvent) {
 
     artist.val.featured = !artist.val.featured
 }
-
-// function addArtist() {
-//     if (props.artist_type == 'artist') return addFeaturedArtist()
-//     let hasArtist = soundcloudStore.hasArtist(props.music_id, props.id)
-//
-//     if (hasArtist) return soundcloudStore.removeArtist(props.music_id, props.id)
-//
-//     // soundcloudStore.addArtist(props.music_id, props.id, undefined, props.newly === false)
-// }
-//
-// function addFeaturedArtist() {
-//     if (props.artist_type == 'featured-artist') {
-//         return
-//     }
-//
-//     soundcloudStore.setArtist(props.music_id, props.id, true)
-// }
 </script>
 <template>
     <div
         role="button"
-        class="flex items-center border-b border-baccent h-11 hover:bg-bextra cursor-pointer transition-colors"
+        class="flex items-center h-11 hover:bg-crust hover:bg-opacity-70 cursor-pointer transition-colors"
         @click="selectArtist"
     >
         <div
-            class="flex items-center h-full stroke-fsecondary hover:stroke-gray-200 transition-all"
+            class="flex items-center h-full stroke-overlay1 hover:stroke-lavender transition-all"
             @click="toggleArtistType"
         >
             <div class="w-8 h-8 flex justify-center items-center">
@@ -67,11 +50,13 @@ function toggleArtistType(e: MouseEvent) {
                 </span>
             </div>
         </div>
-        <div class="flex items-center pr-2">
-            <div class="mr-2">
-                <img class="h-7 aspect-square rounded-full" :src="avatar" />
+        <div class="flex items-center pr-2 overflow-hidden">
+            <div class="mr-2 grow">
+                <img class="h-7 min-w-7 rounded-full" :src="avatar" />
             </div>
-            <span class="text-fprimary">{{ name }}</span>
+            <div class="overflow-hidden text-ellipsis whitespace-nowrap">
+                <span class="text-text">{{ name }}</span>
+            </div>
         </div>
     </div>
 </template>

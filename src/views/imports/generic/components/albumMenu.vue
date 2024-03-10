@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import PlusIcon from '@/components/icons/shadcn/plus.vue'
 import { onMounted, ref, watch } from 'vue'
 import { useMappedAlbumList } from '@/stores/imports/albums'
 import * as Database from '@/stores/imports/database'
@@ -56,13 +57,13 @@ onMounted(() => {
     <div
         ref="wrapperElement"
         id="album-menu-item"
-        class="flex flex-col absolute bg-bprimary border border-baccent left-0 top-0 z-50 min-w-60 max-w-96 text-white rounded-primary"
+        class="flex flex-col absolute bg-mantle left-0 top-0 z-50 min-w-60 max-w-96 w-60 rounded-primary"
         :class="{ hidden: props.opened != true }"
     >
-        <div class="flex gap-1 items-center border-b border-baccent">
+        <div class="flex gap-1 items-center border-b border-surface0">
             <input
                 v-model="albumSearchQuery"
-                class="w-full pl-4 py-2 bg-transparent outline-none"
+                class="w-full pl-4 py-2 bg-transparent outline-none placeholder:text-overlay1 text-text"
                 placeholder="Album name"
             />
             <div class="mr-1">
@@ -71,7 +72,7 @@ onMounted(() => {
         </div>
         <div class="flex flex-col">
             <div class="flex justify-center items-center" v-if="albums.length == 0">
-                <span class="text-fsecondary italic">No albums</span>
+                <span class="text-subtext1 italic">No albums</span>
             </div>
             <AlbumItem
                 :id="album.id"
@@ -89,11 +90,11 @@ onMounted(() => {
                         (albumSearchQuery ?? '').trim() !== ''
                     )
                 }"
-                class="flex justify-center p-2 hover:bg-bextra border-t border-baccent"
+                class="flex stroke-lavender justify-center p-2 hover:bg-surface0"
                 role="button"
                 @click="addAlbum"
             >
-                <PlusIcon :size="24" />
+                <PlusIcon :size="24" color="defaultColor" />
                 <span>Add {{ albumSearchQuery }}</span>
             </div>
         </div>

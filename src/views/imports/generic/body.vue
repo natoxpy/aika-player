@@ -8,8 +8,18 @@ const musicList = useMusicList()
 <template>
     <BodyTemplate>
         <template #musics>
-            <Music :id="music.id" :title="music.title" v-for="music in musicList.musics" />
-            <MusicTemplate state="loading" :id="`${idx}`" v-for="idx in musicList.loadingTotal">
+            <Music
+                :key="music.id"
+                :id="music.id"
+                :title="music.title"
+                v-for="music in musicList.musics"
+            />
+            <MusicTemplate
+                :key="idx"
+                state="loading"
+                :id="`${idx}`"
+                v-for="idx in musicList.loadingTotal"
+            >
                 <template #title> Loading... </template>
             </MusicTemplate>
         </template>

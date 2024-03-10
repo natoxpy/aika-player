@@ -25,33 +25,33 @@ defineEmits<{
         }"
     >
         <div
-            class="flex flex-row overflow-hidden my-4 flex-wrap justify-start gap-6 w-[70%] h-64 min-w-[600px] bg-[hsla(225,10%,5%,0.8)] p-4 rounded-lg transition-all"
+            class="flex flex-row overflow-hidden my-4 flex-wrap justify-start gap-6 w-[70%] h-64 min-w-[600px] bg-mantle p-4 rounded-lg transition-all"
             @drop="(e) => $emit('drop', e)"
             @dragover="(e) => $emit('dragover', e)"
             @dragenter="(e) => $emit('dragenter', e)"
             @dragleave="(e) => $emit('dragleave', e)"
             :class="{
-                'bg-[hsla(160,5%,10%,0.95)] opacity-100': hoverState === 'valid',
-                'bg-[hsla(0,5%,10%,0.95)] opacity-100': hoverState === 'invalid'
+                'bg-mantle': hoverState === 'valid' && false,
+                'bg-mantle bg-opacity-85': hoverState === 'invalid' && false
             }"
         >
             <div
-                class="flex flex-col gap-6 items-center justify-center w-full h-full border-[4px] border-[hsla(225,10%,60%,0.9)] border-dashed rounded-lg transition-all"
+                class="flex flex-col gap-6 items-center justify-center w-full h-full border-[4px] border-dashed rounded-lg transition-all"
                 :class="{
-                    'border-gray-500  stroke-[hsla(225,10%,75%,0.8)]': hoverState === undefined,
-                    'border-emerald-700 stroke-emerald-500': hoverState === 'valid',
-                    'border-red-500 stroke-red-500': hoverState === 'invalid'
+                    'border-lavender  stroke-lavender': hoverState === undefined,
+                    'border-teal stroke-teal': hoverState === 'valid',
+                    'border-red stroke-red': hoverState === 'invalid'
                 }"
             >
-                <span class="text-white text-xl">
-                    <span v-if="hoverState == 'invalid'" class="font-bold text-red-500 uppercase"
+                <span class="text-subtext1 text-xl">
+                    <span v-if="hoverState == 'invalid'" class="font-bold text-red uppercase"
                         >Don't</span
                     >
-                    <span class="font-bold transition-colors">
+                    <span class="font-bold transition-colors text-lavender">
                         Drag and
                         <span
                             :class="{
-                                'text-emerald-500 uppercase': hoverState === 'valid'
+                                'text-teal uppercase': hoverState === 'valid'
                             }"
                         >
                             Drop

@@ -12,26 +12,26 @@ defineEmits<{
 </script>
 <template>
     <div
-        class="flex flex-col text-white h-[360px] min-w-[250px] w-[250px] rounded-primary relative p-3"
+        class="flex flex-col text-text h-[360px] min-w-[250px] w-[250px] rounded-primary relative p-3"
     >
         <div
-            class="absolute top-0 left-0 h-full z-30 w-[250px] rounded-primary opacity-70 bg-[hsla(150,10%,20%,0.7)] stroke-green-300 flex justify-center items-center"
+            class="absolute top-0 left-0 h-full z-30 w-[250px] rounded-primary opacity-70 bg-mantle stroke-teal flex justify-center items-center"
             v-if="state === 'imported'"
         >
-            <CheckIcon :size="200" color="defaultColor" />
+            <CheckIcon :size="75" color="defaultColor" />
         </div>
 
         <div
-            class="absolute top-0 left-0 h-full z-30 w-[250px] rounded-primary opacity-70 bg-[hsla(0,10%,20%,0.7)] stroke-red-300 flex justify-center items-center"
+            class="absolute top-0 left-0 h-full z-30 w-[250px] rounded-primary opacity-70 bg-mantle stroke-red flex justify-center items-center"
             v-if="state === 'failed'"
         >
-            <XIcon :size="200" color="defaultColor" />
+            <XIcon :size="75" color="defaultColor" />
         </div>
         <div
-            class="absolute top-0 left-0 h-full z-20 w-[250px] rounded-primary opacity-70 bg-[hsla(0,10%,10%,0.8)] stroke-gray-500"
+            class="flex justify-center items-center absolute top-0 left-0 h-full z-20 w-[250px] rounded-primary opacity-70 bg-mantle stroke-lavender"
             v-if="state === 'loading'"
         >
-            <Loading stroke="defaultColor" />
+            <Loading size="150px" stroke="defaultColor" />
         </div>
         <!-- FIX: NOT A PERFECT SQUARE, FIX THIS SHIT -->
         <div class="relative w-full mb-4 min-h-[250px] aspect-square">
