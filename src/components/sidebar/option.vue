@@ -34,8 +34,8 @@ function ResolveIcon({ icon }: { icon: OptionIcons }) {
 <template>
     <RouterLink
         :to="props.href"
-        class="cursor-pointer flex gap-4 py-3 px-4 rounded-primary transition stroke-lavender"
-        :class="{ 'bg-base': props.active, 'hover:bg-mantle': !props.active }"
+        class="cursor-pointer flex gap-4 py-3 px-4 rounded-primary transition stroke-lavender hover:bg-base hover:bg-opacity-70"
+        :class="{ 'bg-base': props.active }"
     >
         <ResolveIcon :icon="props.icon" />
         <span class="text-subtext1 font-semibold text-base">
