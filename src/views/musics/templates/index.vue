@@ -1,3 +1,8 @@
+<script setup lang="ts">
+import { usePlayerManager } from '@/modules/player'
+const playerManager = usePlayerManager()
+const player = playerManager.player
+</script>
 <template>
     <div class="pb-4 px-[50px] h-full overflow-auto">
         <div
@@ -5,7 +10,7 @@
         >
             <slot name="header" />
         </div>
-        <div class="flex-grow z-0">
+        <div class="flex-grow z-0" :class="{ 'mb-[70px]': player.getCursor().some }">
             <slot name="body" />
         </div>
     </div>

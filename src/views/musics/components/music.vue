@@ -3,6 +3,7 @@ import MusicTemplate from './templates/music.vue'
 import PlayIcon from '@/components/icons/shadcn/play.vue'
 import PauseIcon from '@/components/icons/shadcn/pause.vue'
 import MoreHorizontalIcon from '@/components/icons/shadcn/moreHorizontal.vue'
+import Options from './options.vue'
 import { useMusicRegistry } from '@/modules/musicRegistry'
 import { usePlayerManager } from '@/modules/player'
 import { useAudioProvider } from '@/modules/audio'
@@ -47,17 +48,12 @@ defineEmits<{
             />
         </template>
         <template #over-cover>
-            <!-- 234, 82, 84 -->
             <div
                 class="p-4 flex flex-col justify-between w-full h-full opacity-0 hover:opacity-100 bg-opacity-40 bg-base transition-all stroke-text"
                 :class="{ 'opacity-100': active }"
             >
                 <div class="flex justify-end">
-                    <button
-                        class="px-1 py-0 rounded-primary bg-surface0 bg-opacity-70 hover:bg-opacity-80 hover:bg-surface1 transition-all hover:stroke-lavender"
-                    >
-                        <MoreHorizontalIcon :size="32" color="defaultColor" />
-                    </button>
+                    <Options />
                 </div>
                 <div>
                     <button
